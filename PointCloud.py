@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
-import pcl
+#import pcl
 from Geometry import *
 
 class PointCloud(object):
     def __init__(self):
-        self.pc = pcl.PointCloud()
+        self.pc = None #pcl.PointCloud()
 
     def update(self,img,depth,A,tr):
 
@@ -19,9 +19,9 @@ class PointCloud(object):
                     pt = pt23D((i,j),d,A)
                     points.append([pt,color])
 
-        points = pcl.transformPointCloud(pcl.PointCloud(np.array(points)),tr)
+        '''points = pcl.transformPointCloud(pcl.PointCloud(np.array(points)),tr)
 
         self.pc.append(points)
         filt = self.pc.make_voxel_filter()
         filt.set_leaf_size(0.1)
-        self.pc = filt.filter()
+        self.pc = filt.filter()'''

@@ -10,23 +10,26 @@ class Feature(object):
         return Feature(self.center + other.center, self.descriptor + other.descriptor)
 
     def __mul__(self, other):
-        return Feature(self.center * other, self.descriptor * other)
+        return Feature(np.array([c * other for c in self.center]), self.descriptor * other)
 
+    __rmul__ = __mul__
     def __eq__(self, other):
-        return self.center == other.center and self.descriptor == other.descriptor
+        return (self.center == other.center).all() and self.descriptor == other.descriptor
 
 def match(src,dst):
 
-    dSrc = [f.desctriptor for f in src]
-    dDst = [f.desctriptor for f in dst]
+    dSrc = np.array([f.descriptor for f in src],dtype='float32')
+    dDst = np.array([f.descriptor for f in dst],dtype='float32')
 
-    matcher = cv2.BFMatcher()
-    matches = matcher.knnMatch(dSrc,dDst,k=2)
+    matcher = cv2.FlannBasedMatcher()
+    matcher.add(dDst)
+    matcher.train()
+    matches = matcher.knnMatch(dSrc,k=2)
     symGood = []
 
     for m,n in matches:
         if m.distance < 0.8*n.distance:
-            symGood.append([m])
+            symGood.append(m)
 
     return symGood
 

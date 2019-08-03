@@ -7,13 +7,12 @@ class Map(object):
         self.features = []
 
     def addFeatures(self,features):
-        self.features.append(features)
+        self.features.extend(features)
 
     def updateFeatrues(self,features,matches,transform):
-        print("a")
         # Transform features
         for f in features:
-            f.coords = transform * f.coords
+            f.center = np.matmul(transform[0:3,0:3], np.array(f.center)) + transform[0:3,3]
 
         # Update coords and descriptors
         for m in matches:

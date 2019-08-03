@@ -5,40 +5,47 @@ import math
 def pt23D(center, depth, A):
     X = depth * (center[0] - A[0, 2]) / A[0, 0]
     Y = depth * (center[1] - A[1, 2]) / A[1, 1]
-    return (X, Y, depth)
+    return np.array([X, Y, depth])
 
 def getSubpix(img,pt):
     
-    x = int(pt.x)
-    y = int(pt.y)
+    x = int(pt.pt[0])
+    y = int(pt.pt[1])
 
     x0 = cv2.borderInterpolate(x,   img.shape[1], cv2.BORDER_REFLECT_101)
     x1 = cv2.borderInterpolate(x+1, img.shape[1], cv2.BORDER_REFLECT_101)
     y0 = cv2.borderInterpolate(y,   img.shape[0], cv2.BORDER_REFLECT_101)
     y1 = cv2.borderInterpolate(y+1, img.shape[0], cv2.BORDER_REFLECT_101)
 
-    a = pt.x - x
-    c = pt.y - y
+    a = pt.pt[0] - x
+    c = pt.pt[1] - y
 
-    d = (img[y0, x0] * (1.0 - a) + img[y0, x1] * a) * (1.0 - c)  + \
-        (img[y1, x0] * (1.0 - a)  + img[y1, x1] * a) * c
+    d = (img[y0, x0] * (1.0 - a) + img[y0, x1] * a) * (1.0 - c) + \
+        (img[y1, x0] * (1.0 - a) + img[y1, x1] * a) * c
 
     return d
 
 def findTransform(src,dst,matches):
 
+    mtx = np.eye(4,4)
+
     matchSrc = [src[m.queryIdx] for m in matches]
     matchDst = [dst[m.trainIdx] for m in matches]
 
-    srcCoords = [f.center for f in matchSrc]
-    dstCoords = [f.center for f in matchDst]
+    srcCoords =np.array([np.array(f.center) for f in matchSrc])
+    dstCoords = np.array([np.array(f.center) for f in matchDst])
 
-    _,mtx,inliers = cv2.estimateAffine3D(srcCoords,dstCoords)
+    _,tr,inliers = cv2.estimateAffine3D(srcCoords,dstCoords)
+
+    mtx[0:3,:] = tr
+
+    goodMatches = [matches[i] for i in range(inliers.shape[0]) if inliers[i] == 1]
+    goodFeatures = [matchDst[i] for i in range(inliers.shape[0]) if inliers[i] == 1]
 
     '''U,S,Vt = cv2.SVDecomp(mtx[0:2,0:2])
     mtx[0:2, 0:2] = U*Vt'''
 
-    return mtx, matches[inliers], matchDst[inliers]
+    return mtx, goodMatches, goodFeatures
 
 
 def euler2rot(theta):
@@ -121,8 +128,8 @@ class Kalman(object):
         self.KF.measurementMatrix[11, 11] = 1
 
     def getMeas(self,tr1,tr2):
-        measured_eulers1 = rot2euler(tr1[0:2,0:2])
-        measured_eulers2 = rot2euler(tr2[0:2,0:2])
+        measured_eulers1 = rot2euler(tr1[0:3,0:3])
+        measured_eulers2 = rot2euler(tr2[0:3,0:3])
 
         measurements = np.zeros(12)
         measurements[0] = tr1[0,2]
@@ -138,14 +145,14 @@ class Kalman(object):
         measurements[10] = measured_eulers2[1]
         measurements[11] = measured_eulers2[2]
 
-        return measurements
+        return measurements.astype('float32')
 
     def __call__(self, tr1, tr2):
         self.KF.predict()
         estimate = self.KF.correct(self.getMeas(tr1,tr2))
 
-        trOut = np.zeros(3,4)
-        trOut[0:2,0:2] = euler2rot([estimate[9],estimate[10],estimate[11]])
+        trOut = np.eye(4)
+        trOut[0:3,0:3] = euler2rot([estimate[9],estimate[10],estimate[11]])
         trOut[0,2] = estimate[0]
         trOut[1,2] = estimate[1]
         trOut[2,2] = estimate[2]

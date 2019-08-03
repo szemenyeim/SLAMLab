@@ -9,7 +9,7 @@ class Dataset(object):
         self.root = root
         self.imgRoot = osp.join(root,"rgb")
         self.depthRoot = osp.join(root,"depth")
-        self.images = sorted(glob.glob1(self.imgRoot,"*.jpg"))
+        self.images = sorted(glob.glob1(self.imgRoot,"*.png"))
         self.depths = sorted(glob.glob1(self.depthRoot,"*.png"))
 
     def __len__(self):
@@ -18,6 +18,6 @@ class Dataset(object):
     def __getitem__(self, i):
 
         img = cv2.imread(osp.join(self.imgRoot,self.images[i]))
-        depth = cv2.imread(osp.join(self.depthRoot,self.depths[i]))
+        depth = cv2.imread(osp.join(self.depthRoot,self.depths[i]),0)
 
         return img,depth
