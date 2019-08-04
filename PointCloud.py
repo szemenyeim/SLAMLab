@@ -1,27 +1,28 @@
 import cv2
 import numpy as np
-#import pcl
 from Geometry import *
 
 class PointCloud(object):
     def __init__(self):
-        self.pc = None #pcl.PointCloud()
+        self.pc = np.ndarray((0,6))
 
     def update(self,img,depth,A,tr):
 
-        points = []
+        img_dow = cv2.resize(img,(320,240))
+        depth_dow = cv2.resize(depth,(320,240))
 
-        for i in range(img.shape[0]):
-            for j in range(img.shape[1]):
-                color = img[i,j,:]
-                d = depth[i,j]
+        ptCnt = np.count_nonzero(depth_dow)
+        points = np.ndarray((ptCnt,6))
+        k = 0
+
+        for i in range(img_dow.shape[0]):
+            for j in range(img_dow.shape[1]):
+                color = img_dow[i,j,:]
+                d = depth_dow[i,j]
                 if d > 0:
-                    pt = pt23D((i,j),d,A)
-                    points.append([pt,color])
+                    pt = np.concatenate((pt23D((i,j),d,A),color))
+                    points[k,:] = np.array(pt)
+                    k += 1
 
-        '''points = pcl.transformPointCloud(pcl.PointCloud(np.array(points)),tr)
-
-        self.pc.append(points)
-        filt = self.pc.make_voxel_filter()
-        filt.set_leaf_size(0.1)
-        self.pc = filt.filter()'''
+        points[:,0:3] = transformPoints(points[:,0:3],np.linalg.inv(tr))
+        self.pc = np.concatenate((self.pc,points))

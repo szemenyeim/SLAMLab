@@ -18,6 +18,6 @@ class Dataset(object):
     def __getitem__(self, i):
 
         img = cv2.imread(osp.join(self.imgRoot,self.images[i]))
-        depth = cv2.imread(osp.join(self.depthRoot,self.depths[i]),0)
+        depth = cv2.imread(osp.join(self.depthRoot,self.depths[i]),-1)
 
         return img,depth

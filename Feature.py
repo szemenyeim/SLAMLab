@@ -18,18 +18,19 @@ class Feature(object):
 
 def match(src,dst):
 
+    if len(dst) == 0 or len(src) == 0:
+        return []
+
     dSrc = np.array([f.descriptor for f in src],dtype='float32')
     dDst = np.array([f.descriptor for f in dst],dtype='float32')
 
     matcher = cv2.FlannBasedMatcher()
-    matcher.add(dDst)
-    matcher.train()
-    matches = matcher.knnMatch(dSrc,k=2)
-    symGood = []
+    matches = matcher.knnMatch(dSrc,dDst,k=2)
 
+    ratioGood = []
     for m,n in matches:
-        if m.distance < 0.8*n.distance:
-            symGood.append(m)
+        if m.distance < 0.7*n.distance:
+            ratioGood.append(m)
 
-    return symGood
+    return ratioGood
 

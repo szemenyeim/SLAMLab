@@ -3,9 +3,10 @@ import numpy as np
 import math
 
 def pt23D(center, depth, A):
-    X = depth * (center[0] - A[0, 2]) / A[0, 0]
-    Y = depth * (center[1] - A[1, 2]) / A[1, 1]
-    return np.array([X, Y, depth])
+    Z = depth
+    X = Z * (center[0] - A[0, 2]) / A[0, 0]
+    Y = -Z * (center[1] - A[1, 2]) / A[1, 1]
+    return np.array([X, Y, Z])
 
 def getSubpix(img,pt):
     
@@ -25,9 +26,18 @@ def getSubpix(img,pt):
 
     return d
 
-def findTransform(src,dst,matches):
+def transformPoints(pts,mtx):
+    ptsH = np.append(pts,np.ones((pts.shape[0],1)),1)
+    tranH = np.transpose(np.matmul(mtx,np.transpose(ptsH)))
+    return tranH[:,:3]
+
+def findRigidTransform(src,dst,matches):
 
     mtx = np.eye(4,4)
+    thresh = 0.1
+
+    if len(dst) == 0 or len(src) == 0 or len(matches) == 0:
+        return mtx,[],[]
 
     matchSrc = [src[m.queryIdx] for m in matches]
     matchDst = [dst[m.trainIdx] for m in matches]
@@ -35,15 +45,27 @@ def findTransform(src,dst,matches):
     srcCoords =np.array([np.array(f.center) for f in matchSrc])
     dstCoords = np.array([np.array(f.center) for f in matchDst])
 
-    _,tr,inliers = cv2.estimateAffine3D(srcCoords,dstCoords)
+    srcCent = np.mean(srcCoords,0)
+    dstCent = np.mean(dstCoords,0)
 
-    mtx[0:3,:] = tr
+    H = np.matmul(np.transpose(srcCoords-srcCent),(dstCoords-dstCent))
 
-    goodMatches = [matches[i] for i in range(inliers.shape[0]) if inliers[i] == 1]
-    goodFeatures = [matchDst[i] for i in range(inliers.shape[0]) if inliers[i] == 1]
+    S,U,Vt = cv2.SVDecomp(H)
+    R = np.matmul(U,Vt)
+    if cv2.determinant(R) < 0:
+        R[:,2] *= -1
+    mtx[0:3,0:3] = np.transpose(R)
+    mtx[0:3,3] = dstCent - np.matmul(R,srcCent)
 
-    '''U,S,Vt = cv2.SVDecomp(mtx[0:2,0:2])
-    mtx[0:2, 0:2] = U*Vt'''
+    trSrc = transformPoints(srcCoords,mtx)
+    distances = [np.sum((s - d) ** 2) for s,d in zip(trSrc,dstCoords)]
+    inliers = [1 if d < thresh else 0 for d in distances]
+
+    goodMatches = [matches[i] for i in range(len(inliers)) if inliers[i] == 1]
+    goodFeatures = [matchDst[i] for i in range(len(inliers)) if inliers[i] == 1]
+
+    for i,m in enumerate(goodMatches):
+        m.trainIdx = i
 
     return mtx, goodMatches, goodFeatures
 
@@ -94,50 +116,56 @@ class Kalman(object):
         cv2.setIdentity(self.KF.errorCovPost,1)
 
         # position
-        self.KF.transitionMatrix[0, 3] = dt
-        self.KF.transitionMatrix[1, 4] = dt
-        self.KF.transitionMatrix[2, 5] = dt
-        self.KF.transitionMatrix[3, 6] = dt
-        self.KF.transitionMatrix[4, 7] = dt
-        self.KF.transitionMatrix[5, 8] = dt
-        self.KF.transitionMatrix[0, 6] = 0.5 * pow(dt, 2)
-        self.KF.transitionMatrix[1, 7] = 0.5 * pow(dt, 2)
-        self.KF.transitionMatrix[2, 8] = 0.5 * pow(dt, 2)
+        transitionMatrix = np.eye(18)
+        transitionMatrix[0, 3] = dt
+        transitionMatrix[1, 4] = dt
+        transitionMatrix[2, 5] = dt
+        transitionMatrix[3, 6] = dt
+        transitionMatrix[4, 7] = dt
+        transitionMatrix[5, 8] = dt
+        transitionMatrix[0, 6] = 0.5 * pow(dt, 2)
+        transitionMatrix[1, 7] = 0.5 * pow(dt, 2)
+        transitionMatrix[2, 8] = 0.5 * pow(dt, 2)
         # orientation
-        self.KF.transitionMatrix[9, 12] = dt
-        self.KF.transitionMatrix[10, 13] = dt
-        self.KF.transitionMatrix[11, 14] = dt
-        self.KF.transitionMatrix[12, 15] = dt
-        self.KF.transitionMatrix[13, 16] = dt
-        self.KF.transitionMatrix[14, 17] = dt
-        self.KF.transitionMatrix[9, 15] = 0.5 * pow(dt, 2)
-        self.KF.transitionMatrix[10, 16] = 0.5 * pow(dt, 2)
-        self.KF.transitionMatrix[11, 17] = 0.5 * pow(dt, 2)
+        transitionMatrix[9, 12] = dt
+        transitionMatrix[10, 13] = dt
+        transitionMatrix[11, 14] = dt
+        transitionMatrix[12, 15] = dt
+        transitionMatrix[13, 16] = dt
+        transitionMatrix[14, 17] = dt
+        transitionMatrix[9, 15] = 0.5 * pow(dt, 2)
+        transitionMatrix[10, 16] = 0.5 * pow(dt, 2)
+        transitionMatrix[11, 17] = 0.5 * pow(dt, 2)
+        self.KF.transitionMatrix = transitionMatrix.astype('float32')
 
-        self.KF.measurementMatrix[0, 0] = 1
-        self.KF.measurementMatrix[1, 1] = 1
-        self.KF.measurementMatrix[2, 2] = 1
-        self.KF.measurementMatrix[3, 0] = 1
-        self.KF.measurementMatrix[4, 1] = 1
-        self.KF.measurementMatrix[5, 2] = 1
-        self.KF.measurementMatrix[6, 9] = 1
-        self.KF.measurementMatrix[7, 10] = 1
-        self.KF.measurementMatrix[8, 11] = 1
-        self.KF.measurementMatrix[9, 9] = 1
-        self.KF.measurementMatrix[10, 10] = 1
-        self.KF.measurementMatrix[11, 11] = 1
+        measurementMatrix = np.zeros((12,18))
+        measurementMatrix[0, 0] = 1
+        measurementMatrix[1, 1] = 1
+        measurementMatrix[2, 2] = 1
+        measurementMatrix[3, 0] = 1
+        measurementMatrix[4, 1] = 1
+        measurementMatrix[5, 2] = 1
+        measurementMatrix[6, 9] = 1
+        measurementMatrix[7, 10] = 1
+        measurementMatrix[8, 11] = 1
+        measurementMatrix[9, 9] = 1
+        measurementMatrix[10, 10] = 1
+        measurementMatrix[11, 11] = 1
+        self.KF.measurementMatrix = measurementMatrix.astype('float32')
 
     def getMeas(self,tr1,tr2):
+        if tr2 is None:
+            tr2 = tr1
         measured_eulers1 = rot2euler(tr1[0:3,0:3])
         measured_eulers2 = rot2euler(tr2[0:3,0:3])
 
         measurements = np.zeros(12)
-        measurements[0] = tr1[0,2]
-        measurements[1] = tr1[1,2]
-        measurements[2] = tr1[2,2]
-        measurements[3] = tr2[0,2]
-        measurements[4] = tr2[1,2]
-        measurements[5] = tr2[2,2]
+        measurements[0] = tr1[0,3]
+        measurements[1] = tr1[1,3]
+        measurements[2] = tr1[2,3]
+        measurements[3] = tr2[0,3]
+        measurements[4] = tr2[1,3]
+        measurements[5] = tr2[2,3]
         measurements[6] = measured_eulers1[0]
         measurements[7] = measured_eulers1[1]
         measurements[8] = measured_eulers1[2]
@@ -153,8 +181,8 @@ class Kalman(object):
 
         trOut = np.eye(4)
         trOut[0:3,0:3] = euler2rot([estimate[9],estimate[10],estimate[11]])
-        trOut[0,2] = estimate[0]
-        trOut[1,2] = estimate[1]
-        trOut[2,2] = estimate[2]
+        trOut[0,3] = estimate[0]
+        trOut[1,3] = estimate[1]
+        trOut[2,3] = estimate[2]
 
         return trOut
