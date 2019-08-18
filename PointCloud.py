@@ -20,7 +20,7 @@ class PointCloud(object):
                 color = img_dow[i,j,:]
                 d = depth_dow[i,j]
                 if d > 0:
-                    pt = np.concatenate((pt23D((i,j),d,A),color))
+                    pt = np.concatenate((pt23D((j*2,i*2),d,A),color))
                     points[k,:] = np.array(pt)
                     k += 1
 

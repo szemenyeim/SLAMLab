@@ -7,9 +7,12 @@ class Map(object):
         self.alpha = 0.2
         self.features = []
 
-    def addFeatures(self,features):
+    def addFeatures(self,features,transform):
         if len(features) > 0:
-            self.features.extend(copy.deepcopy(features))
+            feat = copy.deepcopy(features)
+            for f in feat:
+                f.center = np.matmul(transform[0:3,0:3], np.array(f.center)) + transform[0:3,3]
+            self.features.extend(feat)
 
     def updateFeatrues(self,features,matches,transform):
         if len(features) == 0 or len(matches) == 0:

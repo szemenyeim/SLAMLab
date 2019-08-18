@@ -24,6 +24,7 @@ class SLAM(object):
         self.prevFeat = None
         self.prevKp = None
         self.v = None
+        self.RANSAC = RANSAC()
         self.PC = PointCloud()
         self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.005)
 
@@ -38,29 +39,30 @@ class SLAM(object):
 
             # Match against previous and get tranfsorm
             prevMatch = match(self.prevFeat,features)
-            trPrev,matchPrev,featPrev = findRigidTransform(self.prevFeat,features,prevMatch)
+            trPrev,matchPrev,featPrev = self.RANSAC(self.prevFeat,features,prevMatch)
             trPrev = np.matmul(self.transform,trPrev)
 
             # draw features
             draw = cv2.drawMatches(self.prevImg,self.prevKp,img,kp,prevMatch,None)
             cv2.imshow("matches",draw)
             cv2.imshow("img",img)
+            cv2.imshow("depth",depth)
             cv2.waitKey(1)
 
             # Match against map and get transform
             mapMatch = match(self.Map.features,features)
-            trMap,matchMap,featMap = findRigidTransform(self.Map.features,features,mapMatch)
+            trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
 
             # Run kalman filter
-            self.transform = self.KF(trPrev,trMap)
+            self.transform = self.KF(trPrev,trPrev)
             print(self.KF.getMeas(self.transform,None)[[0,1,2,6,7,8]])
 
             # Update features in map
-            self.Map.updateFeatrues(featMap,matchMap,self.transform)
+            self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
 
             # Add new features to map
             newFeat = [f for f in featPrev if f not in featMap]
-            self.Map.addFeatures(newFeat)
+            self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
 
             # Add to pc
             self.PC.update(img,depth,self.A,self.transform)

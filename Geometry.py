@@ -3,9 +3,9 @@ import numpy as np
 import math
 
 def pt23D(center, depth, A):
-    Z = depth
-    X = Z * (center[0] - A[0, 2]) / A[0, 0]
-    Y = -Z * (center[1] - A[1, 2]) / A[1, 1]
+    Z = depth*0.001
+    X = Z * (center[0] - A[0, 2]) * A[0, 0]
+    Y = -Z * (center[1] - A[1, 2]) * A[1, 1]
     return np.array([X, Y, Z])
 
 def getSubpix(img,pt):
@@ -30,45 +30,6 @@ def transformPoints(pts,mtx):
     ptsH = np.append(pts,np.ones((pts.shape[0],1)),1)
     tranH = np.transpose(np.matmul(mtx,np.transpose(ptsH)))
     return tranH[:,:3]
-
-def findRigidTransform(src,dst,matches):
-
-    mtx = np.eye(4,4)
-    thresh = 0.1
-
-    if len(dst) == 0 or len(src) == 0 or len(matches) == 0:
-        return mtx,[],[]
-
-    matchSrc = [src[m.queryIdx] for m in matches]
-    matchDst = [dst[m.trainIdx] for m in matches]
-
-    srcCoords =np.array([np.array(f.center) for f in matchSrc])
-    dstCoords = np.array([np.array(f.center) for f in matchDst])
-
-    srcCent = np.mean(srcCoords,0)
-    dstCent = np.mean(dstCoords,0)
-
-    H = np.matmul(np.transpose(srcCoords-srcCent),(dstCoords-dstCent))
-
-    S,U,Vt = cv2.SVDecomp(H)
-    R = np.matmul(U,Vt)
-    if cv2.determinant(R) < 0:
-        R[:,2] *= -1
-    mtx[0:3,0:3] = np.transpose(R)
-    mtx[0:3,3] = dstCent - np.matmul(R,srcCent)
-
-    trSrc = transformPoints(srcCoords,mtx)
-    distances = [np.sum((s - d) ** 2) for s,d in zip(trSrc,dstCoords)]
-    inliers = [1 if d < thresh else 0 for d in distances]
-
-    goodMatches = [matches[i] for i in range(len(inliers)) if inliers[i] == 1]
-    goodFeatures = [matchDst[i] for i in range(len(inliers)) if inliers[i] == 1]
-
-    for i,m in enumerate(goodMatches):
-        m.trainIdx = i
-
-    return mtx, goodMatches, goodFeatures
-
 
 def euler2rot(theta):
     R_x = np.array([[1, 0, 0],
@@ -106,6 +67,81 @@ def rot2euler(R):
         z = 0
 
     return np.array([x, y, z])
+
+class RANSAC(object):
+    def __init__(self,dThresh=0.1,N=5,mult=10):
+        self.dThresh = dThresh
+        self.N = N
+        self.mult = mult
+
+    def generateCandidate(self,src,dst):
+        mtx = np.eye(4, 4)
+
+        if len(src) == 0 or len(dst) == 0:
+            return None
+
+        srcCent = np.mean(src, 0)
+        dstCent = np.mean(dst, 0)
+
+        H = np.matmul(np.transpose(src - srcCent), (dst - dstCent))
+
+        S, U, Vt = cv2.SVDecomp(H)
+        R = np.matmul(U, Vt)
+        if cv2.determinant(R) < 0:
+            return None
+        mtx[0:3, 0:3] = np.transpose(R)
+        mtx[0:3, 3] = dstCent - np.matmul(np.transpose(R), srcCent)
+
+        return mtx
+
+    def evalCandidate(self,mtx,src,dst):
+        trSrc = transformPoints(src, mtx)
+        distances = [np.sum((s - d) ** 2) for s, d in zip(trSrc, dst)]
+        inliers = [1 if d < self.dThresh else 0 for d in distances]
+        return inliers
+
+    def __call__(self, src,dst,matches=None):
+
+        if matches is None:
+            matches = [cv2.DMatch(i,i,0) for i in range(src.shape[0])]
+            matchDst = [dst[m.trainIdx] for m in matches]
+            srcCoords = src
+            dstCoords = dst
+        else:
+            matchSrc = [src[m.queryIdx] for m in matches]
+            matchDst = [dst[m.trainIdx] for m in matches]
+            srcCoords = np.array([np.array(f.center) for f in matchSrc])
+            dstCoords = np.array([np.array(f.center) for f in matchDst])
+
+        n = srcCoords.shape[0]
+        if n == 0:
+            return None,[],[]
+        N = min(400,max(2000,self.mult*n))
+
+        candidates = []
+
+        for i in range(N):
+            ind = np.random.randint(0,n,self.N)
+            c = self.generateCandidate(srcCoords[ind,:],dstCoords[ind,:])
+            if c is not None:
+                candidates.append(c)
+
+        inliers = [self.evalCandidate(c,srcCoords,dstCoords) for c in candidates]
+        scores = [sum(i) for i in inliers]
+
+        best_i = np.argmax(scores)
+        inliers = np.array(inliers[best_i],dtype='bool')
+        mtx = self.generateCandidate(srcCoords[inliers],dstCoords[inliers])
+        if mtx is None:
+            mtx = candidates[best_i]
+
+        goodMatches = [matches[i] for i in range(len(inliers)) if inliers[i] == 1]
+        goodFeatures = [matchDst[i] for i in range(len(inliers)) if inliers[i] == 1]
+
+        for i, m in enumerate(goodMatches):
+            m.trainIdx = i
+
+        return mtx, goodMatches, goodFeatures
 
 class Kalman(object):
     def __init__(self,dt):
