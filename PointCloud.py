@@ -11,8 +11,8 @@ class PointCloud(object):
     def update(self,img,depth,A,tr):
 
         # Downscale image (avoid too many points in the cloud)
-        img_dow = cv2.resize(img,(320,240))
-        depth_dow = cv2.resize(depth,(320,240))
+        img_dow = cv2.resize(img,(160,120))
+        depth_dow = cv2.resize(depth,(160,120))
 
         # Count non-zero depth pixels (number of valid points)
         ptCnt = np.count_nonzero(depth_dow)
@@ -31,7 +31,7 @@ class PointCloud(object):
                 if d > 0:
                     # Compute 3D coordinates (use i*2 and j*2 because of downscaling by a factor of 2)
                     # and andd the pixel color to it
-                    pt = np.concatenate((pt23D((j*2,i*2),d,A),color))
+                    pt = np.concatenate((pt23D((j*4,i*4),d,A),color))
 
                     # Set point value
                     points[k,:] = np.array(pt)

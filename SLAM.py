@@ -26,7 +26,7 @@ class SLAM(object):
         self.v = None
         self.RANSAC = RANSAC()
         self.PC = PointCloud()
-        self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.005)
+        self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.001)
 
     # One SLAM step
     def addFrame(self,img,depth):
@@ -47,10 +47,6 @@ class SLAM(object):
 
             # Match against previous
             prevMatch = match(self.prevFeat,features)
-            # Get relative transform
-            trPrev,matchPrev,featPrev = self.RANSAC(self.prevFeat,features,prevMatch)
-            # Get transform from the first frame
-            trPrev = np.matmul(self.transform,trPrev)
 
             # draw features
             draw = cv2.drawMatches(self.prevImg,self.prevKp,img,kp,prevMatch,None)
@@ -59,6 +55,11 @@ class SLAM(object):
             cv2.imshow("depth",depth)
             cv2.waitKey(1)
 
+            # Get relative transform
+            trPrev,matchPrev,featPrev = self.RANSAC(self.prevFeat,features,prevMatch)
+            # Get transform from the first frame
+            trPrev = np.matmul(self.transform,trPrev)
+
             # Match against map
             mapMatch = match(self.Map.features,features)
             # Get transform
@@ -66,7 +67,7 @@ class SLAM(object):
 
             # Run kalman filter
             self.transform = self.KF(trPrev,trPrev)
-            #print(self.KF.getMeas(self.transform,None)[[0,1,2,6,7,8]])
+            print(self.KF.getMeas(self.transform,None)[[0,1,2,6,7,8]])
 
             # Update features in map
             self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
@@ -102,6 +103,5 @@ class SLAM(object):
 
             self.addFrame(img,depth)
 
-            # Visualize every 10 frames
-            if i % 10 == 1:
-                self.visualize()
+        # Visualize
+        self.visualize()
