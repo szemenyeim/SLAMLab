@@ -11,8 +11,8 @@ if __name__ == '__main__':
     i = 0
     while True:
         img,depth = cam.getImages()
-        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
         cv2.imshow("img",img)
+        cv2.imshow("depth",depth)
         c = cv2.waitKey(1)
         if c == 13:
             cv2.imwrite(root + "rgb/" + str(i).zfill(2) + ".png",img)
