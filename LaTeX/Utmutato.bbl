@@ -1,0 +1,101 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.9 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{szgl}{book}{}
+      \name{author}{1}{}{%
+        {{hash=98e9d679df863be6e867a598222a53cd}{%
+           family={Szemenyei},
+           familyi={S\bibinitperiod},
+           given={Márton},
+           giveni={M\bibinitperiod}}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=98e9d679df863be6e867a598222a53cd}{%
+           family={Szemenyei},
+           familyi={S\bibinitperiod},
+           given={Márton},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {BME}%
+      }
+      \strng{namehash}{98e9d679df863be6e867a598222a53cd}
+      \strng{fullhash}{98e9d679df863be6e867a598222a53cd}
+      \strng{bibnamehash}{98e9d679df863be6e867a598222a53cd}
+      \strng{authorbibnamehash}{98e9d679df863be6e867a598222a53cd}
+      \strng{authornamehash}{98e9d679df863be6e867a598222a53cd}
+      \strng{authorfullhash}{98e9d679df863be6e867a598222a53cd}
+      \strng{editorbibnamehash}{98e9d679df863be6e867a598222a53cd}
+      \strng{editornamehash}{98e9d679df863be6e867a598222a53cd}
+      \strng{editorfullhash}{98e9d679df863be6e867a598222a53cd}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Számítógépes Látórendszerek}
+      \field{year}{2019}
+      \verb{urlraw}
+      \verb https://edu.vik.bme.hu/pluginfile.php/53608/mod_resource/content/0/jegyzetFull.pdf
+      \endverb
+      \verb{url}
+      \verb https://edu.vik.bme.hu/pluginfile.php/53608/mod_resource/content/0/jegyzetFull.pdf
+      \endverb
+    \endentry
+    \entry{pycharm}{misc}{}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{labeltitlesource}{title}
+      \field{title}{PyCharm Quick Start Guide}
+      \verb{urlraw}
+      \verb https://www.jetbrains.com/help/pycharm/quick-start-guide.html
+      \endverb
+      \verb{url}
+      \verb https://www.jetbrains.com/help/pycharm/quick-start-guide.html
+      \endverb
+    \endentry
+    \entry{conda}{misc}{}
+      \field{sortinit}{3}
+      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
+      \field{labeltitlesource}{title}
+      \field{title}{Anaconda}
+      \verb{urlraw}
+      \verb https://www.anaconda.com/
+      \endverb
+      \verb{url}
+      \verb https://www.anaconda.com/
+      \endverb
+    \endentry
+    \entry{colab}{misc}{}
+      \field{sortinit}{4}
+      \field{sortinithash}{11cdaee3b18e01d77f3f428b13c1fc76}
+      \field{labeltitlesource}{title}
+      \field{title}{Google Colaboratory}
+      \verb{urlraw}
+      \verb https://colab.research.google.com/
+      \endverb
+      \verb{url}
+      \verb https://colab.research.google.com/
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

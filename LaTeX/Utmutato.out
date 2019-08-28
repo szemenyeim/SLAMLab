@@ -1,0 +1,17 @@
+\BOOKMARK [0][-]{chapter.1}{3D számítógépes látás}{}% 1
+\BOOKMARK [1][-]{section.1.1}{SLAM}{chapter.1}% 2
+\BOOKMARK [2][-]{subsection.1.1.1}{Képjellemzők}{section.1.1}% 3
+\BOOKMARK [2][-]{subsection.1.1.2}{Geometriai Becslések}{section.1.1}% 4
+\BOOKMARK [0][-]{chapter.2}{A mérés környezete}{}% 5
+\BOOKMARK [1][-]{section.2.1}{Haladó Python}{chapter.2}% 6
+\BOOKMARK [1][-]{section.2.2}{Haladó NumPy}{chapter.2}% 7
+\BOOKMARK [0][-]{chapter.3}{Mérési feladatok}{}% 8
+\BOOKMARK [1][-]{section.3.1}{Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy [u, v, d] képkoordináta-mélység pár 3D pozícióját!}{chapter.3}% 9
+\BOOKMARK [1][-]{section.3.2}{Feladat: Végezze el két egymást követő képen a képjellemzők detektálását és robusztus párosítását!}{chapter.3}% 10
+\BOOKMARK [2][-]{subsection.3.2.1}{Képjellemzők detektálása}{section.3.2}% 11
+\BOOKMARK [2][-]{subsection.3.2.2}{Képjellemzők párosítása}{section.3.2}% 12
+\BOOKMARK [1][-]{section.3.3}{Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}{chapter.3}% 13
+\BOOKMARK [1][-]{section.3.4}{Kiegészítő feladatok}{chapter.3}% 14
+\BOOKMARK [2][-]{subsection.3.4.1}{Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}{section.3.4}% 15
+\BOOKMARK [2][-]{subsection.3.4.2}{Feladat: Alkosson robusztus pozícióbecslő eljárást, ami a kamera mozgásának dinamikus modelljét, valamint a két különböző pozíció becslést Kalman-szűrő segítségével kombinálja!}{section.3.4}% 16
+\BOOKMARK [0][-]{chapter.4}{Ellenőrző kérdések}{}% 17

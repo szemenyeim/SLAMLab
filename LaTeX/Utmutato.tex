@@ -1,0 +1,634 @@
+\documentclass[12pt,a4paper,oneside]{report}             % Single-side
+%\documentclass[12pt,a4paper,twoside,openright]{report}  % Duplex
+
+%\PassOptionsToPackage{chapternumber=Huordinal}{magyar.ldf}
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage[thmmarks]{ntheorem}
+\usepackage{graphics}
+\usepackage{epsfig}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{lastpage}
+\usepackage{anysize}
+\usepackage{sectsty}
+\usepackage{setspace}  % Ettol a tablazatok, abrak, labjegyzetek maradnak 1-es sorkozzel!
+\usepackage[hang]{caption}
+\usepackage{hyperref}
+\usepackage[magyar]{babel}
+\usepackage{fontspec}
+\usepackage{textcomp}
+\usepackage{subcaption}
+\usepackage{titlesec, blindtext, color}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{todonotes}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[sorting=none, backend=biber, style=ieee]{biblatex}
+\usepackage{courier}
+\addbibresource{bib.bib}
+\lstloadaspects{formats}
+
+\definecolor{commentgreen}{RGB}{0,200,10}
+\definecolor{weborange}{RGB}{255,10,0}
+\definecolor{frenchplum}{RGB}{129,20,83}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\setlength{\headheight}{14.5pt}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegray},
+	keywordstyle=\bf\color{frenchplum},
+	numberstyle=\color{frenchplum},
+	stringstyle=\color{commentgreen},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false, 
+	fontadjust=true,        
+	breaklines=true,                 
+	captionpos=b,
+	columns=flexible,                   
+	keepspaces=true,                 
+	numbers=none,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                 
+	tabsize=4
+}
+
+\lstset{style=mystyle}
+
+%--------------------------------------------------------------------------------------
+% Main variables
+%--------------------------------------------------------------------------------------
+\newcommand{\vikdept}{Irányítástechnika és Informatika Tanszék}
+\newcommand{\viksubtitle}{Mérési Útmutató}
+
+
+%--------------------------------------------------------------------------------------
+% RAT or IKL conditional
+%--------------------------------------------------------------------------------------
+\newif\ifratlabor
+\ratlabortrue % Comment out for IKL, leave it in for RAT
+
+\ifratlabor
+\newcommand{\viktitle}{3D Képfeldolgozás}
+\newcommand{\vikdoktipus}{Rendszer- és Alkalmazástechnika Laboratórium 1.}
+\newcommand{\vikauthor}{Szemenyei Márton, Kertész Zsolt}
+\else
+\newcommand{\viktitle}{M10 – Egyidejű térképkészítés és lokalizáció (SLAM)}
+\newcommand{\vikdoktipus}{Irányítástechnika és Képfeldolgozás Laboratórium 1.}
+\newcommand{\vikauthor}{Szemenyei Márton}
+\fi
+
+%--------------------------------------------------------------------------------------
+% Page layout setup
+%--------------------------------------------------------------------------------------
+% we need to redefine the pagestyle plain
+% another possibility is to use the body of this command without \fancypagestyle
+% and use \pagestyle{fancy} but in that case the special pages
+% (like the ToC, the References, and the Chapter pages)remain in plane style
+
+\pagestyle{plain}
+\setlength{\parindent}{0pt} % �ttekinthet�bb, angol nyelv� dokumentumokban jellemz�
+\setlength{\parskip}{8pt plus 3pt minus 3pt} % �ttekinthet�bb, angol nyelv� dokumentumokban jellemz�
+%\setlength{\parindent}{12pt} % magyar nyelv� dokumentumokban jellemz�
+%\setlength{\parskip}{0pt}    % magyar nyelv� dokumentumokban jellemz�
+
+\marginsize{35mm}{25mm}{15mm}{15mm} % anysize package
+\setcounter{secnumdepth}{0}
+\sectionfont{\large\upshape\bfseries}
+\setcounter{secnumdepth}{2}
+
+%--------------------------------------------------------------------------------------
+%	Setup hyperref package
+%--------------------------------------------------------------------------------------
+\hypersetup{
+    pdftitle={\viktitle},        % title
+    pdfauthor={\vikauthor},    % author
+    pdfsubject={\vikdoktipus}, % subject of the document
+    pdfcreator={\vikauthor},   % creator of the document
+    pdfkeywords={Számítógépes látás, 3D, SLAM},    % list of keywords
+    pdfnewwindow=true,         % links in new window
+    colorlinks=true,           % false: boxed links; true: colored links
+    linkcolor=black,           % color of internal links
+    citecolor=black,           % color of links to bibliography
+    filecolor=black,           % color of file links
+    urlcolor=black             % color of external links
+}	
+
+%--------------------------------------------------------------------------------------
+%	Some new commands and declarations
+%--------------------------------------------------------------------------------------
+\newcommand{\code}[1]{{\upshape\ttfamily\scriptsize\indent #1}}
+
+% define references
+\newcommand{\figref}[1]{\ref{fig:#1}.}
+\renewcommand{\eqref}[1]{(\ref{eq:#1})}
+\newcommand{\listref}[1]{\ref{listing:#1}.}
+\newcommand{\sectref}[1]{\ref{sect:#1}}
+\newcommand{\tabref}[1]{\ref{tab:#1}.}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+%\DeclareMathOperator*[1]{\floor}{arg\,max}
+\DeclareMathOperator{\sign}{sgn}
+\DeclareMathOperator{\rot}{rot}
+\definecolor{lightgray}{rgb}{0.95,0.95,0.95}
+
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter\hsp}{0pt}{\Huge\bfseries}
+\titlespacing*{\chapter}{0pt}{0pt}{40pt}
+
+
+\author{\vikauthor}
+\title{\viktitle}
+%--------------------------------------------------------------------------------------
+%	Setup captions
+%--------------------------------------------------------------------------------------
+\captionsetup[figure]{
+%labelsep=none,
+%font={footnotesize,it},
+%justification=justified,
+width=.9\textwidth,
+aboveskip=10pt}
+
+\renewcommand{\captionlabelfont}{\small\bf}
+\renewcommand{\captionfont}{\footnotesize\it}
+
+\fancypagestyle{plain}{%
+	\fancyhf{}
+	\renewcommand{\footrulewidth}{1pt}
+	\chead{\viktitle}
+	\lfoot{\thepage/\pageref{LastPage}} %/\pagetotal
+	\rfoot{\leftmark}
+}
+\pagestyle{plain}
+
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{#1}}{}}
+\fancyhf{}
+\chead{\viktitle}
+\lfoot{\thepage/\pageref{LastPage}} %/\pagetotal
+\rfoot{\leftmark}
+\renewcommand{\footrulewidth}{1pt}
+
+%--------------------------------------------------------------------------------------
+% Table of contents and the main text
+%--------------------------------------------------------------------------------------
+\begin{document}
+
+\onehalfspacing
+
+%--------------------------------------------------------------------------------------
+%	The title page
+%--------------------------------------------------------------------------------------
+\begin{titlepage}
+\begin{center}
+\includegraphics[width=60mm,keepaspectratio]{images/logo.png}\\
+\vspace{0.3cm}
+\textbf{Budapesti Műszaki és Gazdaságtudományi Egyetem}\\
+\textmd{Villamosmérnöki és Informatikai Kar}\\
+\textmd{\vikdept}\\[5cm]
+
+\vspace{0.4cm}
+{\huge \bfseries \viktitle}\\[2cm]
+\textsc{\Large \viksubtitle}\\[1cm]
+\textsc{\Large \vikdoktipus}\\[6cm]
+
+\vfill
+{\large \vikauthor}
+\end{center}
+\end{titlepage}
+
+%\pagenumbering{arabic}
+
+%--------------------------------------------------------------------------------------
+% tartalom, ábra és táblázatjegyzék
+%--------------------------------------------------------------------------------------
+\singlespacing
+\tableofcontents\thispagestyle{fancy}
+\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter\hsp}{0pt}{\Huge\bfseries}
+\onehalfspacing
+
+\chapter{3D számítógépes látás}
+
+A számítógépes látás alapvető célja, hogy egy kamera képe(i) alapján a valós világról automatikusan információkat tudjunk nyerni egy számítógépes algoritmus segítségével. A legtöbb gyakorlatban használt képalkotó rendszer azonban a valós, háromdimenziós világról egy kétdimenziós vetületet készít, amely során számos információ teljes mértékben elveszik vagy torzul. Egy tipikus képen nem maradnak meg az egyes képpontok kamerától mért távolságai, így ezeket csak becsülni lehet. Ezen felül belátható, hogy a vetítés művelete miatt számos, számunkra fontos geometriai jellemző is torzul. Ezen felül a térben egyenlő méretű objektumok a képen eltérő méretűek lesznek, ha a kamerától vett távolságuk más. 
+
+Ez a probléma különösen jelentős különböző autonóm robotokban vagy járművekben használt látórendszerek esetén, ugyanis ezeknek az eszközöknek pontos geometriai ismeretekre van szükségük az őket körülvevő térről. Ennek a problémának az egyik megoldása a gyakorlatban elterjedt egyidejű lokalizációs és térképkészítés (Simultaneous Localization and Mapping - SLAM) algoritmusa, amely a jelen mérés tárgyát képezi.
+
+
+
+\section{SLAM}
+
+SLAM algoritmusok esetén a környezetről inkrementális módon készítünk 3D rekonstrukciót, vagyis minden újonnan beérkező kép esetén hozzáadunk a már meglévő rekonstrukcióhoz, miközben a kamera új pozícióját becsüljük. Ebben az esetben a becslést általában az előző képhez és állapothoz képest végezzük. A valósidejűségi követelmény miatt a párosításokat általában optikai áramlás, vagy hasonlóan gyors módszer segítségével végezzük. Egy tipikus SLAM algoritmus lépései a következők:
+
+\begin{enumerate} 
+	\item Jellemző detektálás
+	
+	\item Az előző kép jellemzőivel párosítás
+	
+	\item Kamera póz becslése
+	
+	\item 3D pont koordináták becslése
+	
+	\item Csoport igazítás (Bundle Adjustment)
+	
+\end{enumerate}
+
+A SLAM típusú algoritmusok egyik alapvető problémája a csúszás (drift) jelensége. Ez a jelenség abból adódik, hogy a kamera új pozícióját mindig az előző pozícióhoz képest becsüljük, így a kamera abszolút pozíciója relatív elmozdulások összességéből adódik. Mivel végtelen pontosan becsülni lehetetlenség, ezért az újabb és újabb becslések hibája egyre inkább halmozódik, és a kezdetekben kicsi hiba egyre nagyobb lesz, vagyis a becsült pozíció fokozatosan „elcsúszik” az igazitól.
+
+Ennek a jelenségnek az orvoslására számos módszer létezik, melyek közül az első, hogy a relatív elmozdulást nem csak az előző, hanem korábbi képekhez képest is megbecsüljük, így mérsékelve a csúszás mértékét. Ezt természetesen nem lehet a végletekig művelni, hiszen a mozgó kamera egy idő után új területeket lát majd, és nem lesz átfedés a túl régi képkockákkal, így közös jellemzőket sem fogunk találni. Egy másik megoldás a hurokzár detektálás, melynek során érzékeljük, ha a kamera visszaért egy korábban meglátogatott pozíció közelébe, és ebben az esetben a korábbi pozícióban készített képkockához képest becslünk pozíciót. Általánosságban is lehetséges az a megoldás, hogy az előző képkockák mellett a már elkészült térképrészlethez képest is becsüljük a lokalizációt.
+
+A SLAM algoritmusok implementációját rendkívüli módon egyszerűsíthetjük, ha a bemenetként kapott képhez mélységi információnk is tartozik. Ebben az esetben RGB-D SLAM megoldásról beszélhetünk, amely a hagyományos módszerrel szemben metrikus térképet eredményez. Ekkor ugyanis a kamera elmozdulását nem 2D, hanem 3D pontpárokból végezhetjük el, amely egzakt módon és egyértelműen megoldható. 
+
+
+\subsection{Képjellemzők}
+
+A képek közötti párosítás problémáját igyekszik kezelni a skálainvariáns képjellemző transzformáció, vagyis a SIFT-algoritmus (Scale Invariant Feature Transform), amely a perspektív torzítás kivételével minden transzformációra invariáns, így robusztus lokális régióleírót produkál, amelyet széles körben alkalmaznak. Alapelve, hogy sarokszerű pontokat keres a képen, azonban ezekhez nem egyetlen mértéket, hanem a sarokpontok lokális környezetét invariáns módon leíró kódot készít, amelynek segítségével más képeken megtalált jellemzőkkel összevethető, párosítható.
+
+Ezt a párosítást általában a jellemző vektorok közötti távolság segítségével végezzük. Olyan algoritmusok, amelyek valós számokból álló vektorokat eredményeznek (pl.: SIFT, SURF, KAZE) célszerű a négyzetes távolságot alkalmazni, míg bináris leíró vektorok (ORB, AKAZE) esetén a Hamming-távolság a megfelelő választás. Pusztán a legközelebbi szomszéd megkeresése azonban nem elegendő jó párosítások létrehozására, ugyanis legközelebbi szomszédja azoknak a jellemzőknek is lesz, amelyeknek valamilyen oknál fogva nem található párja a másik képen.
+
+Erre a problémára két lehetséges megoldás is létezik, melyeket gyakorta használnak együtt. Az első az ún. arányteszt: ekkor az adott jellemzőnek nem csak a legközelebbi szomszédját keressük meg a másik képen detektált jellemzők közül, hanem a második legközelebbit is. Ezt követően, ha azt találjuk, hogy a legközelebbi szomszéd leírójától vett távolság lényegesen kisebb, mint a második (vagyis a kettő aránya jelentősen kisebb 1-nél), akkor jó minőségű, egyértelmű párosítást kaptunk, ellenkező esetben a párt elvetjük.
+
+A második lehetséges megoldás a szimmetriateszt: Ekkor, ha azt találjuk, hogy az egyik képen talált $x$ jellemző legközelebbi párja a másik képen található jellemzők közül $y$, megkeressük $y$ legközelebbi szomszédját az első képen található jellemzők közül. Ha ez az $x$ jellemző, akkor a párosítás jó, mivel $x$ legjobb párja az $y$, és ez fordítva is igaz, vagyis a pár szimmetrikus. Ellenkező esetben a párt elvetjük.
+
+\subsection{Geometriai Becslések}
+
+\subsubsection{Pinhole kamera}
+
+A számítógépes látásban gyakran használt a pinhole kameramodell. A pinhole kamera egyszerűen elképzelhető úgy, mint egy doboz, aminek az egyik oldalán vagy egy kis lyuk, amin keresztül fény képes beáramlani. A lyukon beérkező fény hatására a doboz ellenkező oldalán egy fordított állású kép keletkezik. Valódi kamerák esetén itt helyezkedik el a fényszenzor. A valódi kamerák további jelentős különbsége, hogy egyetlen kis lyuk helyett egy lencsét alkalmaznak, ami a párhuzamos fénysugarakat egy helyre fókuszálja, így képes a pinhole-t helyettesíteni. A lencse alkalmazásának előnye, hogy lényegesen több fényt ereszt be, mint a pinhole, azonban – ahogy azt az előző kötetben is tárgyaltuk – geometriai torzítást okoz a képen. A pinhole kameramodell az alábbi egyenletek segítségével írható le: 
+
+\begin{equation}
+\begin{gathered} 
+u = f_x \frac{x}{z} + p_x; \quad v = f_y \frac{y}{z} + p_y; 
+\end{gathered}
+\end{equation}
+
+Ahol \( u \) és \( v \) a pixelek koordinátái, \( x \), \( y \), és \( z \) az objektum térbeli koordinátái, \( f \) a kamera fókusztávolsága, \( p \) pedig a principális pont. Amennyiben \( f \), \( p \) és \( z \) ismertek, akkor az egyenlet könnyedén megfordítható, és a 3D rekonstrukció minden további nehézség nélkül elvégezhető.
+
+\subsubsection{A RANSAC algoritmus}
+
+Amennyiben legalább két 3D pont pár rendelkezésünkre áll, a köztük lévő Euklideszi transzformáció az SVD-felbontás segítségével meghatározható. A téves párosítások torzító hatásának elkerülése végett azonban célszerű a robusztus RANSAC algoritmus használata. A RANSAC alapvetően egy univerzális paraméterbecslési eljárás, amelyet a pontfelhők szegmentálásán kívül még számos helyen használnak: többek között kamerakalibrációra is.
+
+Az algoritmus alapelve rendkívül egyszerű: egy ponthalmazból véletlenszerűen pontokat kiválasztva egy jelöltet készít a megoldásra, majd ezt újabb véletlen választásokkal ismételve nagy számú véletlen jelöltet állít elő. Ezt követően megvizsgálja, hogy az egyes jelöltekre a teljes ponthalmazból hány pont illeszkedik rá. Az egy adott jelöltre illeszkedő pontokat inlier-nek hívjuk. A RANSAC algoritmus minden jelöltre összeszámolja az inliereket, és eredményként visszaadja a legtöbb inlierrel rendelkező jelöltet. A képjellemzők párosításáról, valamint a SLAM és RANSAC algoritmusokról bővebben a Számítógépes Látórendszerek c. tárgy jegyzetében~\cite{szgl} olvashat.
+
+\chapter{A mérés környezete}
+
+A mérés során a \emph{PyCharm} elnevezésű IDE áll rendelkezésre, amely rendkívül sokoldalú szolgáltatásokkal könnyíti meg a szoftverfejlesztést, például konfigurálható automatikus formázási lehetőségek állnak rendelkezésünkre. További részletekért érdemes lehet a JetBrains ide vonatkozó weboldalát~\cite{pycharm} felkeresni. Függvények, objektumok esetében a \textbf{\textit{Ctrl+P}} billentyűkombináció pop-up segítségként szolgálva mutatja nekünk a paramétereket. A mérés során használt programnyelv a Python 3-as verziója lesz.
+
+A Python programnyelvhez számos hasznos függvénykönyvtár tartozik, melyek a mérési feladatok megvalósítását nagymértékben megkönnyítik. A Python nyelv egyik rendkívül kényelmes funkciója a beépített package manager, amelynek segítségével az egyes könyvtárak automatikusan telepíthetők, telepítsük után pedig minden további beállítás nélkül használhatók. A Pythonhoz két ilyen package manager is tartozik, az egyik a Pip, amely a legtöbb telepíthető Python verzió mellé automatikusan települ, a másik pedig az Anaconda~\cite{conda}, ami a könyvtárkezelési funkciókon túl virtuális környezeteket is képes kezelni.
+
+A Python egyik legfontosabb függvénykönyvtára a Numpy, amely tömbök kezelésére, illetve számtalan numerikus algoritmus használatára ad lehetőséget. A Numpy funkcionalitását kiegészíti a MatplotLib, melynek segítségével különböző ábrákat készíthetünk a tömbjeinkről. Egy harmadik rendkívül hasznos könyvtárcsalád a scikit, ami számos tudományos számításhoz szükséges alkönyvtárt foglal össze. A sckit-image képek kezelésére, a scikit-learn gépi tanulás algoritmusok használatára, míg a scikit-fuzzy fuzzy logika használatára ad lehetőséget. Ezek a könyvtárak tulajdonképpen együttesen kiadják a Matlab funkcionalitásának jelentős részét.
+
+\section{Haladó Python}
+
+A korábbi mérés(ek) során megismerkedtünk a Python nyelvvel, a jelen mérés során azonban a nyelv bonyolultabb funkcióira is szükségünk lesz. Az alábbiakban tekintsük át legfontosabb adattípusokat és nyelvi elemeket.
+
+A Python legfontosabb konténer osztályai a list és a tuple. Ezek közt a különbség, hogy a tuple immutable, vagyis nem módosítható. Létrehozásuk és az elemeik elérése az alábbi módon történhet:
+
+\begin{lstlisting}[language=Python]
+myList = ["wow","you","can","mix",2,"or","more","different","types"]
+myTuple = ("wow","you","can","mix",2,"or","more","different","types")
+myList[4] = "two" # 2 becomes 'two'
+myTuple[4] = "two" # Error
+\end{lstlisting}
+
+Érdemes tudni, hogy habár (1D) listák esetében a $+$ operátor értelmezett, ez a listákat összefűzi, nem pedig összeadja.
+
+\begin{lstlisting}[language=Python]
+myList = [1,2]+[3,4]
+	>>> [1,2,3,4] # Not [4,5]
+\end{lstlisting}
+
+Listákhoz új elemet az alábbi módon lehet hozzáadni:
+
+\begin{lstlisting}[language=Python]
+myList = [1,2,3,4]
+myList.append(5) # [1,2,3,4,5]
+\end{lstlisting}
+
+Listák, vagy Tuple-ök elemein az alábbi módokon lehet végigiterálni:
+
+\begin{lstlisting}[language=Python]
+for elem in myList:
+	print(elem)
+	
+for i, elem in enumerate(myList):
+	print(i,elem) # i is the index
+\end{lstlisting}
+
+Adott esetben egyszerre több (egyenlő elemszámú) listán is végigiterálhatunk egyidejűleg:
+
+\begin{lstlisting}[language=Python]
+if len(list1) == len(list2):
+	for (elem1,elem2) in zip(list1,list2):
+		print(elem1,elem2)
+\end{lstlisting}
+
+Érdemes megjegyezni, hogy az 'in' kulcsszó feltételeknél is használható annak eldöntésére, hogy egy adott érték szerepel-e a listában:
+
+\begin{lstlisting}[language=Python]
+myList = [1,2,3,4]
+if 1 in myList:
+	print("1 is in the list")
+if 5 not in myList:
+	print("5 is not in the list")
+\end{lstlisting}
+
+A Python programnyelv támogat bizonyos funkcionális programozási elemeket is, melyek közül az egyik leghasznosabb az úgynevezett list comprehension. Ezt akkor használhatjuk, ha szeretnénk egy lista minden elemén elvégezni egy műveletet és ezek eredményeiből egy újabb listát készíteni. Az alábbi példa egy lista minden elemét négyzetre emeli:
+
+\begin{lstlisting}[language=Python]
+myList = [1,2,3,4]
+mySqrList = [elem**2 for elem in myList] # [1,4,9,16]
+\end{lstlisting}
+
+A list comprehension a korábban említett for ciklus változatokkal (zip, enumerate) is használható, az új lista elemének kiszámolásához pedig bármilyen érvényes Python kód írható. Ezen felül a kifejezés feltétellel is kiegészíthető:
+
+\begin{lstlisting}[language=Python]
+myList = [9,-16,25,-4]
+mySqrtList = [sqrt(elem) for elem in myList if elem >= 0] # [3,5]
+\end{lstlisting}
+
+\section{Haladó NumPy}
+
+Fontos megjegyezni, hogy a Python list és tuple osztályok különböző típusú objektumokat tartalmazhatnak, vagyis egy lista egyik eleme lehet egy másik lista. Ez lehetőséget nyújt arra, hogy a lista osztályt N-dimenziós tömbként használjuk, azonban egy listákat tartalmazó listában az egyes részlisták különböző hosszúak és típusúak lehetnek, ami hagyományos tömböknél nem fordulhat elő. Éppen ezért méret- és típus konzisztens tömbök tárolására a NumPy array osztályt célszerű használni.
+
+A NumPy tömbök között definiált a $+$, $-$, $*$ és a $/$ művelete, azonban ezeket elemenként végzi, így a tömbök méretének kompatibilisnek kell lennie. A NumPy broadcasting szabályai alapján két tömb az alábbi feltételek teljesítése esetén kompatibilis méretű:
+
+\begin{enumerate}
+	\item A két tömb minden mérete megegyezik
+	\item Amelyik dimenzió mentén nem egyeznek meg a méretek, ott az egyik tömb mérete 1
+\end{enumerate}
+
+A tömbök méretét az alábbi módon ellenőrizhetjük:
+
+\begin{lstlisting}[language=Python]
+arr1.shape # [2,4,6]
+arr2.shape # [1,4,1] - Compatible
+arr3.shape # [3,4,6] - Incompatible
+\end{lstlisting}
+
+Bizonyos esetekben előfordulhat, hogy új elemet szeretnénk a tömbhöz adni, vagy két tömböt össze szeretnénk fűzni, amelyeket az alábbi módon tehetünk meg:
+
+\begin{lstlisting}[language=Python]
+extArr = np.append(arr,elem,dim)
+catArr = np.concatenate((arr1,arr2,...,arrn),dim)
+\end{lstlisting}
+
+A $dim$ változó azt adja meg, hogy melyik dimenzió mentén történjen a kiegészítés/összefűzés. Ha None értéket adunk meg (nem adjuk meg a paramétert), akkor a NumPy megpróbálja magától kitalálni.
+
+Gyakran előfordul, hogy egy általunk használt tömbben van egy extra dimenzió, aminek az értéke egy. Például, ha van egy 2D mátrixokból álló tömbünk, amelyiknek kivesszük egy elemét. Ez az extra dimenzió sok fejfájást tud okozni, mert ha konkatenálni, vagy mátrixokat szorozni szeretnénk, a NumPy nem megfelelő méret hibákat fog dobni. Ennek megoldására a squeeze parancs való.
+
+\begin{lstlisting}[language=Python]
+mtxArr.shape # [N,3,3] - N 3x3 matrices
+myMtx = mtxArr[i]
+myMtx.shape # [1,3,3]
+myMtx = mtxArr[i].squeeze()
+myMtx.shape # [3,3]
+\end{lstlisting}
+
+Előfordulhat az is, hogy a tömbjeink megfelelő méretűek, de valamilyen oknál fogva a dimenziók sorrendje eltér. Például képek esetén elterjedt konvenció a $H\times W\times Ch$ sorrend használata, a Deep Learning könyvtárak viszont a $Ch\times H\times W$ sorrendet preferálják. Erre megoldás a NumPy transpose függvény.
+
+\begin{lstlisting}[language=Python]
+myArr.shape # [N,3]
+np.transpose(myArr).shape # [3,N]
+
+# Több dimenzióban
+myImg.shape # [1080,1920,3]
+np.transpose(myImg,(2,0,1)).shape # [3,1080,1920]
+\end{lstlisting}
+
+Ezen felül érdemes még említeni, hogy a NumPy képes különböző lineáris algebrai műveletek elvégzésére, mint például a mátrixszorzás (amennyiben a dimenziók megfelelőek), valamint az invertálás:
+
+\begin{lstlisting}[language=Python]
+myMtx = np.array([[1,2,3],[4,5,6],[7,8,9]])
+myInv = np.linalg.inv(myMtx)
+
+myData = np.randn((50,3)) # 50 3D coordinates
+myTrData = np.matNum(myMtx,myData) # myTrData = myMtx*myData
+\end{lstlisting}
+
+\chapter{Mérési feladatok}
+
+\section{Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy $[u, v, d]$ képkoordináta-mélység pár 3D pozícióját!}
+
+A feladathoz a \emph{Geometry.py} \textbf{pts23D} függvényét kell megvalósítani. A függvény bemenetei: 
+\begin{itemize}
+\item \emph{center}: egy tuple, amely az adott pont képkoordinátáit tartalmazza
+\item \emph{depth}: egy szám, amely az adott pont mélységét tartalmazza milliméterben
+\item \emph{A}: egy NumPy tömb, amely a kameramátrix értékeit tartalmazza
+\end{itemize}
+
+\section{Feladat: Végezze el két egymást követő képen a képjellemzők detektálását és robusztus párosítását!}
+
+\subsection{Képjellemzők detektálása}
+
+A feladathoz a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály konstruktorát, valamint az \textbf{addFrame} függvényét kell módosítani.
+
+AKAZE képjellemző detektor létrehozása (konstruktorba)
+
+\begin{lstlisting}[language=Python]
+self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.001)
+\end{lstlisting}
+
+Kép szürkárnyalatosítása
+
+\begin{lstlisting}[language=Python]
+img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+\end{lstlisting}
+
+Kulcspontok detektálása
+\begin{lstlisting}[language=Python]
+keypoints = self.feat.detect(img_gray)
+\end{lstlisting}
+
+Leírók számítása
+\begin{lstlisting}[language=Python]
+keypoints,descriptors = self.feat.compute(img_gray,keypoints)
+\end{lstlisting}
+
+Depth érték meghatórozása egy kulcsponthoz
+\begin{lstlisting}[language=Python]
+kpDepth = getSubpix(depth,keypoint)
+\end{lstlisting}
+
+Feature létrehozása egy kulcsponthoz
+\begin{lstlisting}[language=Python]
+Feature(pt23D(keypoint.pt,getSubpix(depth,keypoint),self.A),descriptor)
+\end{lstlisting}
+
+\subsection{Képjellemzők párosítása}
+
+A feladathoz a \emph{Feature.py} fájlban definiált \textbf{match} függvényét kell megvalósítani. Ebben a korábban ismertetett arány-alapú párosítást kell megvalósítani.
+
+Matcher létrehozása
+\begin{lstlisting}[language=Python]
+matcher = cv2.FlannBasedMatcher()
+\end{lstlisting}
+
+kNN párosítás meghívása (2 legközelebbi szomszédot keresünk)
+\begin{lstlisting}[language=Python]
+matches = matcher.knnMatch(dSrc,dDst,k=2)
+\end{lstlisting}
+
+A kapott matches lista minden eleme 2 párosítást tartalmaz, melyeken a következő módon iterálhatunk végig ($m$ a legjobb, $n$ a második):
+\begin{lstlisting}[language=Python]
+for m,n in matches:
+\end{lstlisting}
+
+A párosítás távolságának lekérdezése
+\begin{lstlisting}[language=Python]
+m.distance
+\end{lstlisting}
+
+Ezt követően a megvalósított függvényt a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényének megfelelő helyén meg kell hívni.
+
+Előző képjellemzőkkel történő párosítás
+\begin{lstlisting}[language=Python]
+prevMatch = match(self.prevFeat,features)
+\end{lstlisting}
+
+\section{Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}
+
+A feladathoz a \emph{RANSAC.py} fájlban definiált \textbf{RANSAC} osztály \textbf{\_\_call\_\_} függvényét kell megvalósítani.
+
+N darab [0-n) közti random integer előállítása
+
+\begin{lstlisting}[language=Python]
+ind = np.random.randint(0,n,self.N)
+\end{lstlisting}
+
+Transzformáció jelölt készítése
+
+\begin{lstlisting}[language=Python]
+c = self.generateCandidate(srcCoords[ind,:],dstCoords[ind,:])
+\end{lstlisting}
+
+A kapott $c$ jelölt lehet \textbf{None} bizonyos esetekben, így a jelölteket tartalmazó listához csak akkor adható hozzá, ha nem az.
+
+Jelölt kiértékelése és inlierek meghatározása. A kimenet egy lista, melynek minden eleme $0$ vagy $1$ az adott pontpár inlier státuszának függvényében.
+
+\begin{lstlisting}[language=Python]
+inliers = self.evalCandidate(c,srcCoords,dstCoords)
+\end{lstlisting}
+
+Listában lévő számok összege (bináris lista esetén az egyesek száma)
+\begin{lstlisting}[language=Python]
+score = sum(inliers)
+\end{lstlisting}
+
+Tömb maximum pozíciójának megkeresése
+
+\begin{lstlisting}[language=Python]
+best_i = np.argmax(scores)
+\end{lstlisting}
+
+A legjobb jelölthöz tartozó inlierek. A bool konverzió azért szükséges, mert a NumPy az int tömbbel történő indexelést másképp értelmezi, mint a bool tömb esetén.
+
+\begin{lstlisting}[language=Python]
+inliers = np.array(inliers[best_i],dtype='bool')
+\end{lstlisting}
+
+Ezt követően a jelölt állításához használt módszerrel finomítsuk a legjobb jelöltet csak az inlier pontok használatával. FONTOS: Ez megint lehet \textbf{None}, ebben az esetben használjuk a finomítás nélküli legjobb jelölt értéket.
+
+\begin{lstlisting}[language=Python]
+mtx = self.generateCandidate(srcCoords[inliers],dstCoords[inliers])
+\end{lstlisting}
+
+Ezt követően a megvalósított függvényt a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényének megfelelő helyén meg kell hívni.
+
+Relatív transzformáció meghatározása
+
+\begin{lstlisting}[language=Python]
+trPrev,matchPrev,featPrev = self.RANSAC(self.prevFeat,features,prevMatch)
+\end{lstlisting}
+
+Aboszolút transzformáció meghatározása
+
+\begin{lstlisting}[language=Python]
+self.transform = np.matmul(self.transform,trPrev)
+\end{lstlisting}
+
+\section{Kiegészítő feladatok}
+
+A feladatokhoz a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényét kell módosítani.
+
+\subsection{Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}
+
+A feladathoz érdemes a \emph{Map.py} fájlban definiált \textbf{Map} osztály megvalósítását tanulmányozni.
+
+Térkép jellemzőivel történő párosítás
+
+\begin{lstlisting}[language=Python]
+mapMatch = match(self.Map.features,features)
+\end{lstlisting}
+
+Transzformáció számolása
+\begin{lstlisting}[language=Python]
+trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
+\end{lstlisting}
+
+A térképben már szereplő jellemzők frissítése
+
+\begin{lstlisting}[language=Python]
+self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
+\end{lstlisting}
+
+A térképben még nem szereplő jellemzők megkeresése (előző képen is megtalált jellemzők, amik a térképben nincsenek benne)
+
+\begin{lstlisting}[language=Python]
+newFeat = [f for f in featPrev if f not in featMap]
+\end{lstlisting}
+
+Új jellemzők hozzáadása
+
+\begin{lstlisting}[language=Python]
+self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
+\end{lstlisting}
+
+\subsection{Feladat: Alkosson robusztus pozícióbecslő eljárást, ami a kamera mozgásának dinamikus modelljét, valamint a két különböző pozíció becslést Kalman-szűrő segítségével kombinálja!}
+
+A feladathoz érdemes a \emph{Kalman.py} fájlban definiált \textbf{Kalman} osztály megvalósítását tanulmányozni (különös tekintettel a dinamikus rendszer mátrixaira).
+
+Első lépésként egy korábban megírt kódrészletet kell módosítanunk. Az előző képhez képesti relatív elmozdulást amikor átkonvertáltuk abszulút pozícióvá, az ereménnyel felülírtuk a $self.transform$ változót. Ezt most meg kellene változtatni az alábbi módon:
+
+\begin{lstlisting}[language=Python]
+trPrev = np.matmul(self.transform,trPrev)
+\end{lstlisting}
+
+Ezt követően futtassuk le a Kalman szűrőt
+
+\begin{lstlisting}[language=Python]
+self.transform = self.KF(trPrev,trPrev)
+\end{lstlisting}
+
+\chapter{Ellenőrző kérdések}
+
+\begin{enumerate}
+	\item Hogyan lehet képeken komplex képjellemzőket detektálni? Hogyan érdemes ezek párosítását elvégezni?
+	\item Mik a SLAM algoritmus lépései?
+	\item Mi az a drift és hogyan kerülhető el?
+	\item Írja fel a Pinhole kamera vetítésének egyenletét!
+	\item Mi az a RANSAC algoritmus? Milyen lépései vannak?
+	\item Mire használható a Kalman szűrő? Mire alapszik?
+	\item Adott három Python lista $a$, $b$ (egyenlő hosszúak) és $c$ (bármekkora lehet). Ezekből szeretnénk előállítani egy kimeneti listát ($d$), melynek $d_i$ eleme az alábbi módon álljon elő: $d_i = [a_i*b_i; ~~ b_i+a_i]$. Ezt az elemet viszont csak páratlan $i$ értékek mellett állítsuk elő, vagy abban a kivételes esetben, ha $a_i$ benne van a $c$ listában, $b_i$ viszont nincs. Állítsa elő a $d$ listát egyetlen (1!) sor Python kóddal!
+	\item Adott két NumPy mátrix, $A$, amely egy $1\times 3\times 4$ tömb, valamint $X$, amely egy $3\times N$ mátrix, melynek minden oszlopát ($x_i$) egy 3D vektorként értelmezünk. Állítsa elő az $Y$ tömböt (szintén $3\times N$), amelynek minden oszlopa $y_i = A^{-1} \hat{x_i}$ ahol $\hat{x_i}$ az $x_i$ homogén koordinátás változata. A megoldáshoz nem használhat for ciklust!
+\end{enumerate}
+
+Az utolsó két kérdés helyes megoldásához a Google Colab~\cite{colab} online Python notebook környezetben lehet kísérletezgetni.
+
+\printbibliography
+
+\end{document}
+

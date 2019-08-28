@@ -1,0 +1,39 @@
+\select@language {magyar} \boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {chapter}{\numberline {1}3D számítógépes látás}{2}{chapter.1}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {section}{\numberline {1.1}SLAM}{2}{section.1.1}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {subsection}{\numberline {1.1.1}Képjellemzők}{3}{subsection.1.1.1}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {subsection}{\numberline {1.1.2}Geometriai Becslések}{4}{subsection.1.1.2}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {subsubsection}{Pinhole kamera}{4}{subsection.1.1.2}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {subsubsection}{A RANSAC algoritmus}{5}{equation.1.1.1}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {chapter}{\numberline {2}A mérés környezete}{6}{chapter.2}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {section}{\numberline {2.1}Haladó Python}{6}{section.2.1}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {section}{\numberline {2.2}Haladó NumPy}{8}{section.2.2}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {chapter}{\numberline {3}Mérési feladatok}{10}{chapter.3}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {section}{\numberline {3.1}Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy $[u, v, d]$ képkoordináta-mélység pár 3D pozícióját!}{10}{section.3.1}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {section}{\numberline {3.2}Feladat: Végezze el két egymást követő képen a képjellemzők detektálását és robusztus párosítását!}{10}{section.3.2}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {subsection}{\numberline {3.2.1}Képjellemzők detektálása}{10}{subsection.3.2.1}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {subsection}{\numberline {3.2.2}Képjellemzők párosítása}{11}{subsection.3.2.2}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {section}{\numberline {3.3}Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}{11}{section.3.3}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {section}{\numberline {3.4}Kiegészítő feladatok}{12}{section.3.4}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {subsection}{\numberline {3.4.1}Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}{13}{subsection.3.4.1}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {subsection}{\numberline {3.4.2}Feladat: Alkosson robusztus pozícióbecslő eljárást, ami a kamera mozgásának dinamikus modelljét, valamint a két különböző pozíció becslést Kalman-szűrő segítségével kombinálja!}{13}{subsection.3.4.2}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {chapter}{\numberline {4}Ellenőrző kérdések}{14}{chapter.4}
