@@ -1,5 +1,5 @@
 import SLAM
-from Camera import *
+#from Camera import *
 import sys
 
 if __name__ == '__main__':

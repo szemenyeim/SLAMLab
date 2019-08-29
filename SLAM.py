@@ -26,7 +26,7 @@ class SLAM(object):
         self.v = None
         self.RANSAC = RANSAC()
         self.PC = PointCloud()
-        self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.001)
+        self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.0005)
 
     # One SLAM step
     def addFrame(self,img,depth):
@@ -43,6 +43,9 @@ class SLAM(object):
         # Get features if the depth is not zero at their location (we need 3D features only)
         features = [Feature(pt23D(k.pt,getSubpix(depth,k),self.A),d) for k,d in zip(kp,desc) if getSubpix(depth,k) > 0]
 
+        # Remove no depth keypoints
+        kp = [k for k in kp if getSubpix(depth,k) > 0]
+
         if self.prevImg is not None:
 
             # Match against previous
@@ -52,7 +55,7 @@ class SLAM(object):
             draw = cv2.drawMatches(self.prevImg,self.prevKp,img,kp,prevMatch,None)
             cv2.imshow("matches",draw)
             cv2.imshow("img",img)
-            cv2.imshow("depth",depth)
+            cv2.imshow("depth",img*np.expand_dims(depth/10000,2)/255)
             cv2.waitKey(1)
 
             # Get relative transform
@@ -66,7 +69,7 @@ class SLAM(object):
             trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
 
             # Run kalman filter
-            self.transform = self.KF(trPrev,trPrev)
+            self.transform = self.KF(trPrev,trMap)
             print(self.KF.getMeas(self.transform,None)[[0,1,2,6,7,8]])
 
             # Update features in map

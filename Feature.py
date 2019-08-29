@@ -42,8 +42,9 @@ def match(src,dst):
     # Create new list for good matches
     ratioGood = []
 
-    # If best is considerably better than second best, then add it to good matches
+    # For all matches
     for m,n in matches:
+        # If best is considerably better than second best, then add it to good matches
         if m.distance < 0.7*n.distance:
             ratioGood.append(m)
 
