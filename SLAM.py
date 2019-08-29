@@ -41,6 +41,8 @@ class SLAM(object):
         #TODO: Construct list of features where the depth is not zero at their location (don't forget to get the 3D coordinate of the feature)
         features = []
 
+        #TODO: Remove no depth keypoints
+
         if self.prevImg is not None:
 
             #TODO: Match against previous
@@ -50,7 +52,7 @@ class SLAM(object):
             '''draw = cv2.drawMatches(self.prevImg,self.prevKp,img,kp,prevMatch,None)
             cv2.imshow("matches",draw)'''
             cv2.imshow("img",img)
-            cv2.imshow("depth",depth)
+            cv2.imshow("depth",img*np.expand_dims(depth/10000,2)/255)
             cv2.waitKey(1)
 
             #TODO: Get relative transform
