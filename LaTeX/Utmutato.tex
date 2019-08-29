@@ -439,7 +439,7 @@ A feladathoz a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály konstru
 AKAZE képjellemző detektor létrehozása (konstruktorba)
 
 \begin{lstlisting}[language=Python]
-self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.001)
+self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.0005)
 \end{lstlisting}
 
 Kép szürkárnyalatosítása
@@ -475,7 +475,7 @@ Feature(pt23D(keypoint.pt,getSubpix(depth,keypoint),self.A),descriptor)
 Olyan kulcspontok eldobása, amelyekhez $0$ depth érték tartozik
 
 \begin{lstlisting}[language=Python]
-kp = [k for k in kp if getSubpix(depth,k) > 0]
+keypoints = [k for k in keypoints if getSubpix(depth,k) > 0]
 \end{lstlisting}
 
 \subsection{Képjellemzők párosítása}
