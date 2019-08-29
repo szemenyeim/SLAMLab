@@ -449,23 +449,33 @@ img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 \end{lstlisting}
 
 Kulcspontok detektálása
+
 \begin{lstlisting}[language=Python]
 keypoints = self.feat.detect(img_gray)
 \end{lstlisting}
 
 Leírók számítása
+
 \begin{lstlisting}[language=Python]
 keypoints,descriptors = self.feat.compute(img_gray,keypoints)
 \end{lstlisting}
 
 Depth érték meghatórozása egy kulcsponthoz
+
 \begin{lstlisting}[language=Python]
 kpDepth = getSubpix(depth,keypoint)
 \end{lstlisting}
 
 Feature létrehozása egy kulcsponthoz
+
 \begin{lstlisting}[language=Python]
 Feature(pt23D(keypoint.pt,getSubpix(depth,keypoint),self.A),descriptor)
+\end{lstlisting}
+
+Olyan kulcspontok eldobása, amelyekhez $0$ depth érték tartozik
+
+\begin{lstlisting}[language=Python]
+kp = [k for k in kp if getSubpix(depth,k) > 0]
 \end{lstlisting}
 
 \subsection{Képjellemzők párosítása}
@@ -473,21 +483,25 @@ Feature(pt23D(keypoint.pt,getSubpix(depth,keypoint),self.A),descriptor)
 A feladathoz a \emph{Feature.py} fájlban definiált \textbf{match} függvényét kell megvalósítani. Ebben a korábban ismertetett arány-alapú párosítást kell megvalósítani.
 
 Matcher létrehozása
+
 \begin{lstlisting}[language=Python]
 matcher = cv2.FlannBasedMatcher()
 \end{lstlisting}
 
 kNN párosítás meghívása (2 legközelebbi szomszédot keresünk)
+
 \begin{lstlisting}[language=Python]
 matches = matcher.knnMatch(dSrc,dDst,k=2)
 \end{lstlisting}
 
 A kapott matches lista minden eleme 2 párosítást tartalmaz, melyeken a következő módon iterálhatunk végig ($m$ a legjobb, $n$ a második):
+
 \begin{lstlisting}[language=Python]
 for m,n in matches:
 \end{lstlisting}
 
 A párosítás távolságának lekérdezése
+
 \begin{lstlisting}[language=Python]
 m.distance
 \end{lstlisting}
@@ -495,6 +509,7 @@ m.distance
 Ezt követően a megvalósított függvényt a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényének megfelelő helyén meg kell hívni.
 
 Előző képjellemzőkkel történő párosítás
+
 \begin{lstlisting}[language=Python]
 prevMatch = match(self.prevFeat,features)
 \end{lstlisting}
