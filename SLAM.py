@@ -31,7 +31,7 @@ class SLAM(object):
     # One SLAM step
     def addFrame(self,img,depth):
 
-        # Conver image to gray (create new)
+        # Convert image to gray (create new)
         img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
         # Detect features

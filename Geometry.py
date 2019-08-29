@@ -4,7 +4,9 @@ import math
 
 # 2D+depth -> 3D conversion
 def pt23D(center, depth, A):
+    # Convert Z to meters
     Z = depth*0.001
+    # Compute X and Y
     X = Z * (center[0] - A[0, 2]) / A[0, 0]
     Y = Z * (center[1] - A[1, 2]) / A[1, 1]
     return np.array([X, Y, Z])
