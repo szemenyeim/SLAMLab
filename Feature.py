@@ -33,19 +33,15 @@ def match(src,dst):
     dSrc = np.array([f.descriptor for f in src])
     dDst = np.array([f.descriptor for f in dst])
 
-    # Create Flann based matcher
-    matcher = cv2.FlannBasedMatcher()
+    #TODO: Create Flann based matcher
 
-    # kNNMatch k=2
-    matches = matcher.knnMatch(dSrc,dDst,k=2)
+    #TODO: kNNMatch k=2
 
     # Create new list for good matches
     ratioGood = []
 
-    # If best is considerably better than second best, then add it to good matches
-    for m,n in matches:
-        if m.distance < 0.7*n.distance:
-            ratioGood.append(m)
+    #TODO: If best is considerably better than second best, then add it to good matches
+
 
     # Return good matches
     return ratioGood

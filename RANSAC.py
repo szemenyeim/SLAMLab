@@ -87,37 +87,29 @@ class RANSAC(object):
 
         candidates = []
 
-        # Generate N candidates
-        for i in range(N):
+        #TODO: Generate N candidates
 
-            # Select self.N random point pairs
-            ind = np.random.randint(0,n,self.N)
+            #TODO: Select self.N random point pairs
 
-            # Generate candidate
-            c = self.generateCandidate(srcCoords[ind,:],dstCoords[ind,:])
+            #TODO: Generate candidate
 
-            # Add to list if not None
-            if c is not None:
-                candidates.append(c)
+            #TODO: Add to list if not None
 
-        # get list of inliers for every candidate
-        inliers = [self.evalCandidate(c,srcCoords,dstCoords) for c in candidates]
+        #TODO: get list of inliers for every candidate
+        inliers = []
 
-        # Get number of inliers for every candidate
-        scores = [sum(i) for i in inliers]
+        #TODO: Get number of inliers for every candidate
+        scores = []
 
-        # Get best candidate index
-        best_i = np.argmax(scores)
+        #TODO: Get best candidate index
 
-        # Get inlier list for best candidate and convert to bool
-        inliers = np.array(inliers[best_i],dtype='bool')
+        #TODO: Get inlier list for best candidate and convert to bool
+        inliers = []
 
-        # Regenerate best candidate using all the inliers
-        mtx = self.generateCandidate(srcCoords[inliers],dstCoords[inliers])
+        #TODO: Regenerate best candidate using all the inliers
+        mtx = []
 
-        # If the result is None, just use the best original candidate
-        if mtx is None:
-            mtx = candidates[best_i]
+        #TODO: If the result is None, just use the best original candidate
 
         # get good Matches and good Features
         goodMatches = [matches[i] for i in range(len(inliers)) if inliers[i] == 1]

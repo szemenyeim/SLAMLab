@@ -26,56 +26,53 @@ class SLAM(object):
         self.v = None
         self.RANSAC = RANSAC()
         self.PC = PointCloud()
-        self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.001)
+        #TODO: create feature detector
 
     # One SLAM step
     def addFrame(self,img,depth):
 
-        # Convert image to gray (create new)
-        img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        #TODO: Convert image to gray (create new)
 
-        # Detect features
-        kp = self.feat.detect(img_gray)
+        #TODO: Detect features
+        keypoints = []
 
-        # Compute descriptors
-        kp,desc = self.feat.compute(img_gray,kp)
+        #TODO: Compute descriptors
 
-        # Get features if the depth is not zero at their location (we need 3D features only)
-        features = [Feature(pt23D(k.pt,getSubpix(depth,k),self.A),d) for k,d in zip(kp,desc) if getSubpix(depth,k) > 0]
+        #TODO: Construct list of features where the depth is not zero at their location (don't forget to get the 3D coordinate of the feature)
+        features = []
 
         if self.prevImg is not None:
 
-            # Match against previous
-            prevMatch = match(self.prevFeat,features)
+            #TODO: Match against previous
 
-            # draw features
-            draw = cv2.drawMatches(self.prevImg,self.prevKp,img,kp,prevMatch,None)
-            cv2.imshow("matches",draw)
+            # Draw features
+            #TODO: Uncomment
+            '''draw = cv2.drawMatches(self.prevImg,self.prevKp,img,kp,prevMatch,None)
+            cv2.imshow("matches",draw)'''
             cv2.imshow("img",img)
             cv2.imshow("depth",depth)
             cv2.waitKey(1)
 
-            # Get relative transform
-            trPrev,matchPrev,featPrev = self.RANSAC(self.prevFeat,features,prevMatch)
-            # Get transform from the first frame
-            trPrev = np.matmul(self.transform,trPrev)
+            #TODO: Get relative transform
 
-            # Match against map
-            mapMatch = match(self.Map.features,features)
-            # Get transform
-            trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
+            #TODO: Get absolute transform
 
-            # Run kalman filter
-            self.transform = self.KF(trPrev,trPrev)
-            print(self.KF.getMeas(self.transform,None)[[0,1,2,6,7,8]])
 
-            # Update features in map
-            self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
+            #TODO: Match against map
 
-            # Get new features (features in featPrev, but not in featMap)
-            newFeat = [f for f in featPrev if f not in featMap]
-            # Add new features
-            self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
+            #TODO: Get transform
+
+
+            #TODO: Run kalman filter
+
+
+            #TODO: Update features in map
+
+
+            #TODO: Get new features (features in featPrev, but not in featMap)
+
+            #TODO: Add new features
+
 
             # Update point cloud
             self.PC.update(img,depth,self.A,self.transform)
@@ -84,7 +81,7 @@ class SLAM(object):
         self.prevImg = img
         self.prevDepth = depth
         self.prevFeat = features
-        self.prevKp = kp
+        self.prevKp = keypoints
 
     def visualize(self):
         # If visualizer already exists
@@ -103,5 +100,5 @@ class SLAM(object):
 
             self.addFrame(img,depth)
 
-        # Visualize
-        self.visualize()
+            # Visualize
+            self.visualize()
