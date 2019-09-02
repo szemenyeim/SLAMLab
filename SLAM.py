@@ -27,6 +27,7 @@ class SLAM(object):
         self.RANSAC = RANSAC()
         self.PC = PointCloud()
         self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.0005)
+        np.random.seed(1)
 
     # One SLAM step
     def addFrame(self,img,depth):
@@ -97,7 +98,7 @@ class SLAM(object):
             self.v.load(self.PC.pc[:,0:3],self.PC.pc[:,3:6]/255.0)
         else:
             # Create new one
-            self.v = pptk.viewer(self.PC.pc[:,0:3],self.PC.pc[:,3:6]/255.0)
+            self.v = pptk.viewer(self.PC.pc[:,0:3],self.PC.pc[:,3:6]/255.0,debug=True)
         cv2.waitKey(0)
 
     def run(self):

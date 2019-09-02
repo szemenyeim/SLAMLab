@@ -3,7 +3,7 @@ from Geometry import *
 
 # RANSAC Algorithm
 class RANSAC(object):
-    def __init__(self,dThresh=0.0001,N=5,mult=10):
+    def __init__(self,dThresh=0.001,N=5,mult=10):
 
         # Distance threshold for inliers
         self.dThresh = dThresh
@@ -83,7 +83,7 @@ class RANSAC(object):
             return None,[],[]
 
         # Number of candidates to generate is 400 < self.mult*n < 2000
-        N = min(400,max(2000,self.mult*n))
+        N = min(500,max(2000,self.mult*n))
 
         candidates = []
 
