@@ -26,6 +26,7 @@ class SLAM(object):
         self.v = None
         self.RANSAC = RANSAC()
         self.PC = PointCloud()
+        np.random.seed(1)
         #TODO: create feature detector
 
     # One SLAM step
