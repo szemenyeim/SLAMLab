@@ -62,10 +62,10 @@ class SLAM(object):
             # Get relative transform
             trPrev,matchPrev,featPrev = self.RANSAC(self.prevFeat,features,prevMatch)
             # Get transform from the first frame
-            trPrev = np.matmul(self.transform,trPrev)
+            self.transform = np.matmul(self.transform,trPrev)
 
             # Match against map
-            mapMatch = match(self.Map.features,features)
+            '''mapMatch = match(self.Map.features,features)
             # Get transform
             trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
 
@@ -79,7 +79,7 @@ class SLAM(object):
             # Get new features (features in featPrev, but not in featMap)
             newFeat = [f for f in featPrev if f not in featMap]
             # Add new features
-            self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
+            self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))'''
 
             # Update point cloud
             self.PC.update(img,depth,self.A,self.transform)
