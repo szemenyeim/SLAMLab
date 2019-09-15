@@ -53,10 +53,10 @@
       \field{title}{Számítógépes Látórendszerek}
       \field{year}{2019}
       \verb{urlraw}
-      \verb https://edu.vik.bme.hu/pluginfile.php/53608/mod_resource/content/0/jegyzetFull.pdf
+      \verb http://deeplearning.iit.bme.hu/jegyzetFull.pdf
       \endverb
       \verb{url}
-      \verb https://edu.vik.bme.hu/pluginfile.php/53608/mod_resource/content/0/jegyzetFull.pdf
+      \verb http://deeplearning.iit.bme.hu/jegyzetFull.pdf
       \endverb
     \endentry
     \entry{pycharm}{misc}{}
