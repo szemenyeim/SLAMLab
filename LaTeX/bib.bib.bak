@@ -1,3 +1,27 @@
 % Encoding: UTF-8
 
+@Misc{conda,
+  title = {Anaconda},
+  url   = {https://www.anaconda.com/},
+}
+
+@Misc{pycharm,
+  title = {PyCharm Quick Start Guide},
+  url   = {https://www.jetbrains.com/help/pycharm/quick-start-guide.html},
+}
+
+@Book{szgl,
+  title     = {Számítógépes Látórendszerek},
+  publisher = {BME},
+  year      = {2019},
+  author    = {Szemenyei, Márton},
+  editor    = {Szemenyei, Márton},
+  url       = {https://edu.vik.bme.hu/pluginfile.php/53608/mod_resource/content/0/jegyzetFull.pdf},
+}
+
+@Misc{colab,
+  title = {Google Colaboratory},
+  url   = {https://colab.research.google.com/},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}
