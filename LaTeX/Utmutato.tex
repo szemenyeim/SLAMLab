@@ -416,7 +416,7 @@ myMtx = np.array([[1,2,3],[4,5,6],[7,8,9]])
 myInv = np.linalg.inv(myMtx)
 
 myData = np.randn((50,3)) # 50 3D coordinates
-myTrData = np.matNum(myMtx,myData) # myTrData = myMtx*myData
+myTrData = np.matMul(myMtx,myData) # myTrData = myMtx*myData
 \end{lstlisting}
 
 \chapter{Mérési feladatok}
@@ -638,7 +638,7 @@ self.transform = self.KF(trPrev,trPrev)
 	\item Mi az a RANSAC algoritmus? Milyen lépései vannak?
 	\item Mire használható a Kalman szűrő? Mire alapszik?
 	\item Adott három Python lista $a$, $b$ (egyenlő hosszúak) és $c$ (bármekkora lehet). Ezekből szeretnénk előállítani egy kimeneti listát ($d$), melynek $d_i$ eleme az alábbi módon álljon elő: $d_i = [a_i*b_i; ~~ b_i+a_i]$. Ezt az elemet viszont csak páratlan $i$ értékek mellett állítsuk elő, vagy abban a kivételes esetben, ha $a_i$ benne van a $c$ listában, $b_i$ viszont nincs. Állítsa elő a $d$ listát egyetlen (1!) sor Python kóddal!
-	\item Adott két NumPy mátrix, $A$, amely egy $1\times 3\times 4$ tömb, valamint $X$, amely egy $3\times N$ mátrix, melynek minden oszlopát ($x_i$) egy 3D vektorként értelmezünk. Állítsa elő az $Y$ tömböt (szintén $3\times N$), amelynek minden oszlopa $y_i = A^{-1} \hat{x_i}$ ahol $\hat{x_i}$ az $x_i$ homogén koordinátás változata. A megoldáshoz nem használhat for ciklust!
+	\item Adott két NumPy mátrix, $A$, amely egy $3\times 4$ mátrix, valamint $X$, amely egy $3\times N$ mátrix, melynek minden oszlopát ($x_i$) egy 3D vektorként értelmezünk. Állítsa elő az $Y$ tömböt (szintén $3\times N$), amelynek minden oszlopa $y_i = A^{-1} \hat{x_i}$ ahol $\hat{x_i}$ az $x_i$ homogén koordinátás változata. A megoldáshoz nem használhat for ciklust!
 \end{enumerate}
 
 Az utolsó két kérdés helyes megoldásához a Google Colab~\cite{colab} online Python notebook környezetben lehet kísérletezgetni.
