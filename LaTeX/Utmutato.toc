@@ -28,12 +28,12 @@
 \defcounter {refsection}{0}\relax 
 \select@language {magyar} \contentsline {subsection}{\numberline {3.2.2}Képjellemzők párosítása}{11}{subsection.3.2.2}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {section}{\numberline {3.3}Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}{11}{section.3.3}
+\select@language {magyar} \contentsline {section}{\numberline {3.3}Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}{12}{section.3.3}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {section}{\numberline {3.4}Kiegészítő feladatok}{12}{section.3.4}
+\select@language {magyar} \contentsline {section}{\numberline {3.4}Kiegészítő feladatok}{13}{section.3.4}
 \defcounter {refsection}{0}\relax 
 \select@language {magyar} \contentsline {subsection}{\numberline {3.4.1}Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}{13}{subsection.3.4.1}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {subsection}{\numberline {3.4.2}Feladat: Alkosson robusztus pozícióbecslő eljárást, ami a kamera mozgásának dinamikus modelljét, valamint a két különböző pozíció becslést Kalman-szűrő segítségével kombinálja!}{13}{subsection.3.4.2}
+\select@language {magyar} \contentsline {subsection}{\numberline {3.4.2}Feladat: Alkosson robusztus pozícióbecslő eljárást, ami a kamera mozgásának dinamikus modelljét, valamint a két különböző pozíció becslést Kalman-szűrő segítségével kombinálja!}{14}{subsection.3.4.2}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {chapter}{\numberline {4}Ellenőrző kérdések}{14}{chapter.4}
+\select@language {magyar} \contentsline {chapter}{\numberline {4}Ellenőrző kérdések}{15}{chapter.4}

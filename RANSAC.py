@@ -78,25 +78,24 @@ class RANSAC(object):
             dstCoords = np.array([np.array(f.center) for f in matchDst])
 
         # Number of matching features. If 0, return none
-        n = srcCoords.shape[0]
-        if n == 0:
+        numMatches = srcCoords.shape[0]
+        if numMatches == 0:
             return None,[],[]
 
-        # Number of candidates to generate is 400 < self.mult*n < 2000
-        N = min(500,max(2000,self.mult*n))
+        # Number of candidates to generate is 400 < self.mult*numMatches < 2000
+        numCandidates = min(500,max(2000,self.mult*numMatches))
 
         candidates = []
 
-        #TODO: Generate N candidates
+        #TODO: Create indices array
 
-            #TODO: Select self.N random point pairs
+        #TODO: Generate candidates
+        candidates = []
 
-            #TODO: Generate candidate
-
-            #TODO: Add to list if not None
+        #TODO: Remove candidates that are None
 
         #TODO: get list of inliers for every candidate
-        inliers = []
+        arrayOfInliers = []
 
         #TODO: Get number of inliers for every candidate
         scores = []

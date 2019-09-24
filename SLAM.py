@@ -37,12 +37,12 @@ class SLAM(object):
         #TODO: Detect features
         keypoints = []
 
+        #TODO: Remove no depth keypoints
+
         #TODO: Compute descriptors
 
-        #TODO: Construct list of features where the depth is not zero at their location (don't forget to get the 3D coordinate of the feature)
+        #TODO: Construct list of features (don't forget to get the 3D coordinate of the feature)
         features = []
-
-        #TODO: Remove no depth keypoints
 
         if self.prevImg is not None:
 
@@ -50,7 +50,7 @@ class SLAM(object):
 
             # Draw features
             #TODO: Uncomment
-            '''draw = cv2.drawMatches(self.prevImg,self.prevKp,img,kp,prevMatch,None)
+            '''draw = cv2.drawMatches(self.prevImg,self.prevKp,img,keypoints,prevMatch,None)
             cv2.imshow("matches",draw)'''
             cv2.imshow("img",img)
             cv2.imshow("depth",img*np.expand_dims(depth/10000,2)/255)
