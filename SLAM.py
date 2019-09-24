@@ -11,7 +11,7 @@ np.set_printoptions(suppress=True)
 import pptk
 
 class SLAM(object):
-    def __init__(self,root,fps = 25):
+    def __init__(self,root,fps = 1):
         self.frameCnt = 0
         self.Dataset = Dataset(root)
         self.Map = Map()
@@ -36,16 +36,17 @@ class SLAM(object):
         img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
         # Detect features
-        kp = self.feat.detect(img_gray)
-
-        # Compute descriptors
-        kp,desc = self.feat.compute(img_gray,kp)
-
-        # Get features if the depth is not zero at their location (we need 3D features only)
-        features = [Feature(pt23D(k.pt,getSubpix(depth,k),self.A),d) for k,d in zip(kp,desc) if getSubpix(depth,k) > 0]
+        keypoints = self.feat.detect(img_gray)
 
         # Remove no depth keypoints
-        kp = [k for k in kp if getSubpix(depth,k) > 0]
+        keypoints = [k for k in keypoints if getSubpix(depth,k) > 0]
+
+        # Compute descriptors
+        keypoints,descriptors = self.feat.compute(img_gray,keypoints)
+
+        # Get features (we need 3D features only)
+        features = [Feature(pt23D(k.pt,getSubpix(depth,k),self.A),d) for k,d in zip(keypoints,descriptors)]
+
 
         if self.prevImg is not None:
 
@@ -53,7 +54,7 @@ class SLAM(object):
             prevMatch = match(self.prevFeat,features)
 
             # draw features
-            draw = cv2.drawMatches(self.prevImg,self.prevKp,img,kp,prevMatch,None)
+            draw = cv2.drawMatches(self.prevImg,self.prevKp,img,keypoints,prevMatch,None)
             cv2.imshow("matches",draw)
             cv2.imshow("img",img)
             cv2.imshow("depth",img*np.expand_dims(depth/10000,2)/255)
@@ -62,10 +63,10 @@ class SLAM(object):
             # Get relative transform
             trPrev,matchPrev,featPrev = self.RANSAC(self.prevFeat,features,prevMatch)
             # Get transform from the first frame
-            self.transform = np.matmul(self.transform,trPrev)
+            trPrev = np.matmul(self.transform,trPrev)
 
             # Match against map
-            '''mapMatch = match(self.Map.features,features)
+            mapMatch = match(self.Map.features,features)
             # Get transform
             trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
 
@@ -79,7 +80,7 @@ class SLAM(object):
             # Get new features (features in featPrev, but not in featMap)
             newFeat = [f for f in featPrev if f not in featMap]
             # Add new features
-            self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))'''
+            self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
 
             # Update point cloud
             self.PC.update(img,depth,self.A,self.transform)
@@ -88,7 +89,7 @@ class SLAM(object):
         self.prevImg = img
         self.prevDepth = depth
         self.prevFeat = features
-        self.prevKp = kp
+        self.prevKp = keypoints
 
     def visualize(self):
         # If visualizer already exists

@@ -3,7 +3,7 @@ from Geometry import *
 
 # RANSAC Algorithm
 class RANSAC(object):
-    def __init__(self,dThresh=0.0001,N=4,mult=10):
+    def __init__(self,dThresh=0.001,N=4,mult=10):
 
         # Distance threshold for inliers
         self.dThresh = dThresh
@@ -85,23 +85,26 @@ class RANSAC(object):
         # Number of candidates to generate is 400 < self.mult*numMatches < 2000
         numCandidates = min(500,max(2000,self.mult*numMatches))
 
-        candidates = []
+        # Create indices array
+        indices = np.random.randint(0,numMatches,(numCandidates,self.N))
 
-        #TODO: Create indices array
+        # Generate candidates
+        candidates = [self.generateCandidate(srcCoords[i],dstCoords[i]) for i in indices]
 
-        #TODO: Generate candidates
-        candidates = []
+        # Remove candidates that are None
+        candidates = [c for c in candidates if c is not None]
 
-        #TODO: Remove candidates that are None
+        # Evaluate all candidates
+        arrayOfInliers = [self.evalCandidate(candidate, srcCoords, dstCoords) for candidate in candidates]
 
         # Get number of inliers for every candidate
-        scores = [sum(i) for i in inliers]
+        scores = [sum(i) for i in arrayOfInliers]
 
         # Get best candidate index
         best_i = np.argmax(scores)
 
         # Get inlier list for best candidate and convert to bool
-        inliers = np.array(inliers[best_i],dtype='bool')
+        inliers = np.array(arrayOfInliers[best_i],dtype='bool')
 
         # Regenerate best candidate using all the inliers
         mtx = self.generateCandidate(srcCoords[inliers],dstCoords[inliers])

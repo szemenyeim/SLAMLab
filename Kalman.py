@@ -1,7 +1,7 @@
 from Geometry import *
 
 class Kalman(object):
-    def __init__(self,dt):
+    def __init__(self,dt=1):
 
         # Create KALMAN filter with 18 states (6 variables + first and second derivatives)
         # and 12 observations (2 independent observations of the 6 variables)

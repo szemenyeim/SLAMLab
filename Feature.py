@@ -40,13 +40,7 @@ def match(src,dst):
     matches = matcher.knnMatch(dSrc,dDst,k=2)
 
     # Create new list for good matches
-    ratioGood = []
-
-    # For all matches
-    for m,n in matches:
-        # If best is considerably better than second best, then add it to good matches
-        if m.distance < 0.6*n.distance:
-            ratioGood.append(m)
+    ratioGood = [m for m,n in matches if m.distance/n.distance < 0.6]
 
     # Return good matches
     return ratioGood

@@ -39,7 +39,7 @@ def transformPoints(pts,mtx):
     tranH = np.transpose(np.matmul(mtx,np.transpose(ptsH)))
 
     # Return first 3 coordinates (assuming euclidean transforms)
-    return tranH[:,:3]
+    return tranH[:,:3]/tranH[:,3:4]
 
 # Convert rotation matrix to euler angles
 def euler2rot(theta):
