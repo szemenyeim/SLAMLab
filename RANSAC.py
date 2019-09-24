@@ -3,7 +3,7 @@ from Geometry import *
 
 # RANSAC Algorithm
 class RANSAC(object):
-    def __init__(self,dThresh=0.0001,N=4,mult=10):
+    def __init__(self,dThresh=0.001,N=4,mult=10):
 
         # Distance threshold for inliers
         self.dThresh = dThresh

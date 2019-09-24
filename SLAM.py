@@ -11,7 +11,7 @@ np.set_printoptions(suppress=True)
 import pptk
 
 class SLAM(object):
-    def __init__(self,root,fps = 25):
+    def __init__(self,root,fps = 1):
         self.frameCnt = 0
         self.Dataset = Dataset(root)
         self.Map = Map()
