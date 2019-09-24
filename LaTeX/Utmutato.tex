@@ -421,6 +421,8 @@ myTrData = np.matMul(myMtx,myData) # myTrData = myMtx*myData
 
 \chapter{Mérési feladatok}
 
+A feladatok megoldása során célszerű arra figyelni, hogy az alábbi mintakódokban bizonyos függvények listákat várnak/adnak vissza, míg más metódusok 1-1 objektummal működnek. A változók elnevezése (egyes-többes szám) ezt egyértelműen jelzi.
+
 \section{Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy $[u, v, d]$ képkoordináta-mélység pár 3D pozícióját!}
 
 A feladathoz a \emph{Geometry.py} \textbf{pts23D} függvényét kell megvalósítani. A függvény bemenetei: 
@@ -454,28 +456,30 @@ Kulcspontok detektálása
 keypoints = self.feat.detect(img_gray)
 \end{lstlisting}
 
+FONTOS! A keypoints lista létrehozása után csak azokat a kulcspontokat szabad megtartani, amelyekhez $0$-nál nagyobb depth érték tartozik.
+
 Leírók számítása
 
 \begin{lstlisting}[language=Python]
 keypoints,descriptors = self.feat.compute(img_gray,keypoints)
 \end{lstlisting}
 
-Depth érték meghatórozása egy kulcsponthoz
+Depth érték meghatározása egy kulcsponthoz
 
 \begin{lstlisting}[language=Python]
 kpDepth = getSubpix(depth,keypoint)
 \end{lstlisting}
 
+3D koordináták meghatározása:
+
+\begin{lstlisting}[language=Python]
+pt3D = pt23D(keypoint.pt,kpDepth,self.A)
+\end{lstlisting}
+
 Feature létrehozása egy kulcsponthoz
 
 \begin{lstlisting}[language=Python]
-Feature(pt23D(keypoint.pt,getSubpix(depth,keypoint),self.A),descriptor)
-\end{lstlisting}
-
-Olyan kulcspontok eldobása, amelyekhez $0$ depth érték tartozik
-
-\begin{lstlisting}[language=Python]
-keypoints = [k for k in keypoints if getSubpix(depth,k) > 0]
+Feature(pt3D,descriptor)
 \end{lstlisting}
 
 \subsection{Képjellemzők párosítása}
@@ -494,16 +498,12 @@ kNN párosítás meghívása (2 legközelebbi szomszédot keresünk)
 matches = matcher.knnMatch(dSrc,dDst,k=2)
 \end{lstlisting}
 
-A kapott matches lista minden eleme 2 párosítást tartalmaz, melyeken a következő módon iterálhatunk végig ($m$ a legjobb, $n$ a második):
+Ezt követően alkalmazzuk az aránypár alapú szűrést. Egy képjellemzőt akkor érdemes megtartani, ha a legközelebbi és a második legközelebbi szomszédok távolságának aránya egy bizonyos küszöbértéknél kisebb. A mérésben próbálják ki a $0.1$ an $0.7$ és a $0.9$ küszöbértékeket.
+
+Egy párosítás távolságának lekérdezése
 
 \begin{lstlisting}[language=Python]
-for m,n in matches:
-\end{lstlisting}
-
-A párosítás távolságának lekérdezése
-
-\begin{lstlisting}[language=Python]
-m.distance
+match.distance
 \end{lstlisting}
 
 Ezt követően a megvalósított függvényt a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényének megfelelő helyén meg kell hívni.
@@ -518,27 +518,30 @@ prevMatch = match(self.prevFeat,features)
 
 A feladathoz a \emph{RANSAC.py} fájlban definiált \textbf{RANSAC} osztály \textbf{\_\_call\_\_} függvényét kell megvalósítani.
 
-N darab [0-n) közti random integer előállítása
+A feladat során három fontos változónk lesz: A $numCandidates$ az összesen előállítandó megoldás jelöltek száma, a $numMatches$ a képjellemző párok száma, a $self.N$ pedig azt adja meg, hogy egyetlen jelöltet hány darab pont pár segítségével határozzunk meg.
+
+$numCandidates\times self.N$ darab $[0-numMatches)$ közti random integer előállítása. Ezeket használhatjuk a képjellemző koordinátákat tartalmazó tömbökbe történő indexelésre.
 
 \begin{lstlisting}[language=Python]
-ind = np.random.randint(0,n,self.N)
+indices = np.random.randint(0,numMatches,(numCandidates,self.N))
 \end{lstlisting}
 
-Transzformáció jelölt készítése
+Egy darab transzformáció jelölt készítése. A bemeneti változókat a teljes listákból az előbb előállított random indexek alapján kell kiválasztani.
 
 \begin{lstlisting}[language=Python]
-c = self.generateCandidate(srcCoords[ind,:],dstCoords[ind,:])
+candidate = self.generateCandidate(srcCoordsSelection,dstCoordsSelection)
 \end{lstlisting}
 
-A kapott $c$ jelölt lehet \textbf{None} bizonyos esetekben, így a jelölteket tartalmazó listához csak akkor adható hozzá, ha nem az.
+A kapott $candidate$ jelölt lehet \textbf{None} bizonyos esetekben, így a jelölteket tartalmazó listából ezeket utólag törölni kell.
 
 Jelölt kiértékelése és inlierek meghatározása. A kimenet egy lista, melynek minden eleme $0$ vagy $1$ az adott pontpár inlier státuszának függvényében.
 
 \begin{lstlisting}[language=Python]
-inliers = self.evalCandidate(c,srcCoords,dstCoords)
+inliers = self.evalCandidate(candidate,srcCoords,dstCoords)
 \end{lstlisting}
 
 Listában lévő számok összege (bináris lista esetén az egyesek száma)
+
 \begin{lstlisting}[language=Python]
 score = sum(inliers)
 \end{lstlisting}
@@ -552,13 +555,13 @@ best_i = np.argmax(scores)
 A legjobb jelölthöz tartozó inlierek. A bool konverzió azért szükséges, mert a NumPy az int tömbbel történő indexelést másképp értelmezi, mint a bool tömb esetén.
 
 \begin{lstlisting}[language=Python]
-inliers = np.array(inliers[best_i],dtype='bool')
+inliers = np.array(arrayOfInliers[best_i],dtype='bool')
 \end{lstlisting}
 
 Ezt követően a jelölt állításához használt módszerrel finomítsuk a legjobb jelöltet csak az inlier pontok használatával. FONTOS: Ez megint lehet \textbf{None}, ebben az esetben használjuk a finomítás nélküli legjobb jelölt értéket.
 
 \begin{lstlisting}[language=Python]
-mtx = self.generateCandidate(srcCoords[inliers],dstCoords[inliers])
+mtx = self.generateCandidate(InlierSrcCoords,InlierDstCoords)
 \end{lstlisting}
 
 Ezt követően a megvalósított függvényt a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényének megfelelő helyén meg kell hívni.
@@ -625,7 +628,7 @@ trPrev = np.matmul(self.transform,trPrev)
 Ezt követően futtassuk le a Kalman szűrőt
 
 \begin{lstlisting}[language=Python]
-self.transform = self.KF(trPrev,trPrev)
+self.transform = self.KF(trPrev,trMap)
 \end{lstlisting}
 
 \chapter{Ellenőrző kérdések}
@@ -638,7 +641,7 @@ self.transform = self.KF(trPrev,trPrev)
 	\item Mi az a RANSAC algoritmus? Milyen lépései vannak?
 	\item Mire használható a Kalman szűrő? Mire alapszik?
 	\item Adott három Python lista $a$, $b$ (egyenlő hosszúak) és $c$ (bármekkora lehet). Ezekből szeretnénk előállítani egy kimeneti listát ($d$), melynek $d_i$ eleme az alábbi módon álljon elő: $d_i = [a_i*b_i; ~~ b_i+a_i]$. Ezt az elemet viszont csak páratlan $i$ értékek mellett állítsuk elő, vagy abban a kivételes esetben, ha $a_i$ benne van a $c$ listában, $b_i$ viszont nincs. Állítsa elő a $d$ listát egyetlen (1!) sor Python kóddal!
-	\item Adott két NumPy mátrix, $A$, amely egy $3\times 4$ mátrix, valamint $X$, amely egy $3\times N$ mátrix, melynek minden oszlopát ($x_i$) egy 3D vektorként értelmezünk. Állítsa elő az $Y$ tömböt (szintén $3\times N$), amelynek minden oszlopa $y_i = A^{-1} \hat{x_i}$ ahol $\hat{x_i}$ az $x_i$ homogén koordinátás változata. A megoldáshoz nem használhat for ciklust!
+	\item Adott két NumPy mátrix, $A$, amely egy $4\times 4$ mátrix, valamint $X$, amely egy $3\times N$ mátrix, melynek minden oszlopát ($x_i$) egy 3D vektorként értelmezünk. Állítsa elő az $Y$ tömböt (szintén $3\times N$), amelynek minden oszlopa $y_i = A^{-1} \hat{x_i}$ ahol $\hat{x_i}$ az $x_i$ homogén koordinátás változata. A megoldáshoz nem használhat for ciklust!
 \end{enumerate}
 
 Az utolsó két kérdés helyes megoldásához a Google Colab~\cite{colab} online Python notebook környezetben lehet kísérletezgetni.
