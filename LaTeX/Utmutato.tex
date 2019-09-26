@@ -295,6 +295,18 @@ A Python egyik legfontosabb függvénykönyvtára a Numpy, amely tömbök kezel�
 
 A korábbi mérés(ek) során megismerkedtünk a Python nyelvvel, a jelen mérés során azonban a nyelv bonyolultabb funkcióira is szükségünk lesz. Az alábbiakban tekintsük át legfontosabb adattípusokat és nyelvi elemeket.
 
+A Python egy fontos típusa a $None$, amely nagyjából a null pointerrel ekvivalens objektum. Gyakori, hogy egyes függvények sikertelen futás esetén ezt adják visszatérési értéknek, így célszerű tudni, hogy hogyan lehetséges egy objektum esetén a $None$ státuszt ellenőrizni. Fontos tudni, hogy a hagyományos $==$ operátor alkalmazása ekkor kerülendő, ugyanis bizonyos osztályok ezt az operátort felüldefiniálhatják, és ekkor nem kívánt működést kaphatunk.
+
+\begin{lstlisting}[language=Python]
+class Foo:
+	def __eq__(self,other):
+	return True
+	
+foo=Foo()
+print(foo==None) # True
+print(foo is None) # False
+\end{lstlisting}
+
 A Python legfontosabb konténer osztályai a list és a tuple. Ezek közt a különbség, hogy a tuple immutable, vagyis nem módosítható. Létrehozásuk és az elemeik elérése az alábbi módon történhet:
 
 \begin{lstlisting}[language=Python]
@@ -419,9 +431,28 @@ myData = np.randn((50,3)) # 50 3D coordinates
 myTrData = np.matMul(myMtx,myData) # myTrData = myMtx*myData
 \end{lstlisting}
 
+Érdemes ezen felül azt is tudni, hogy a NumPy támogat magas szintű indexelést. Ez azt jelenti, hogy egy tömbbe nem csak egyetlen, hanem egyszerre több (akár egy egész tömbnyi) indexszel is indexelhetünk.
+
+\begin{lstlisting}[language=Python]
+myData = np.randn((50,3)) # 50 3D coordinates
+
+# Get 1.,5.,13.,and 44. rows
+myRowIndices = np.array([1,5,13,44])
+myRows = myData[myRowIndices]
+
+# Get 1. and 3. columns
+myColumnSelectors = np.array([True,False,True])
+myColumns = myData[myColumnSelectors]
+
+# Index using a condition
+myPositiveData = myData[myData>0]
+\end{lstlisting}
+
 \chapter{Mérési feladatok}
 
 A feladatok megoldása során célszerű arra figyelni, hogy az alábbi mintakódokban bizonyos függvények listákat várnak/adnak vissza, míg más metódusok 1-1 objektummal működnek. A változók elnevezése (egyes-többes szám) ezt egyértelműen jelzi.
+
+FONTOS: Az alábbi feladatokat célszerű list comprehension segítségével megoldani, ugyanis ez a hagyományos kibontott for ciklusoknál 30\%-kal gyorsabb.
 
 \section{Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy $[u, v, d]$ képkoordináta-mélység pár 3D pozícióját!}
 
@@ -450,27 +481,27 @@ Kép szürkárnyalatosítása
 img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 \end{lstlisting}
 
-Kulcspontok detektálása
+Kulcspontok detektálása. A kimenet egy lista, melynek minden eleme egy kulcspont objektum.
 
 \begin{lstlisting}[language=Python]
 keypoints = self.feat.detect(img_gray)
 \end{lstlisting}
 
-FONTOS! A keypoints lista létrehozása után csak azokat a kulcspontokat szabad megtartani, amelyekhez $0$-nál nagyobb depth érték tartozik.
+FONTOS! A keypoints lista létrehozása után csak azokat a kulcspontokat szabad megtartani, amelyekhez $0$-nál nagyobb depth érték tartozik. List comprehension segítségével lehetséges ugyanannak a listának a felülírása.
 
-Leírók számítása
-
-\begin{lstlisting}[language=Python]
-keypoints,descriptors = self.feat.compute(img_gray,keypoints)
-\end{lstlisting}
-
-Depth érték meghatározása egy kulcsponthoz
+Depth érték meghatározása egy kulcsponthoz. Ez azért szükséges, mert a detektált kulcspontok pozíciója szubpixeles pontossággal lett meghatározva (értsd: a koordináták lebegőpontos számok), így nem tudunk a depth képtömbbe egyszerűen beleindexelni. Ezért az alábbi függvény segítségével bilineáris interpolációt hajtunk végre.
 
 \begin{lstlisting}[language=Python]
 kpDepth = getSubpix(depth,keypoint)
 \end{lstlisting}
 
-3D koordináták meghatározása:
+Leírók számítása. A descriptors lista minden eleme a vele megegyező indexű kulcsponthoz tartozó leírót tartalmazza.
+
+\begin{lstlisting}[language=Python]
+keypoints,descriptors = self.feat.compute(img_gray,keypoints)
+\end{lstlisting}
+
+3D koordináták meghatározása. A $kpDepth$ meghatározása itt a fentihez hasonló módon történik.
 
 \begin{lstlisting}[language=Python]
 pt3D = pt23D(keypoint.pt,kpDepth,self.A)
@@ -482,6 +513,8 @@ Feature létrehozása egy kulcsponthoz
 Feature(pt3D,descriptor)
 \end{lstlisting}
 
+A fenti sorok egymásba ágyazásával az összes kulcsponthoz tartozó Feature objektum egyszerűen előállítható. (Tipp: a zip segítségével a keypoints és a descriptors listák egyszerre iterálhatók.)
+
 \subsection{Képjellemzők párosítása}
 
 A feladathoz a \emph{Feature.py} fájlban definiált \textbf{match} függvényét kell megvalósítani. Ebben a korábban ismertetett arány-alapú párosítást kell megvalósítani.
@@ -492,19 +525,15 @@ Matcher létrehozása
 matcher = cv2.FlannBasedMatcher()
 \end{lstlisting}
 
-kNN párosítás meghívása (2 legközelebbi szomszédot keresünk)
+kNN párosítás meghívása (2 legközelebbi szomszédot keresünk). 
 
 \begin{lstlisting}[language=Python]
 matches = matcher.knnMatch(dSrc,dDst,k=2)
 \end{lstlisting}
 
-Ezt követően alkalmazzuk az aránypár alapú szűrést. Egy képjellemzőt akkor érdemes megtartani, ha a legközelebbi és a második legközelebbi szomszédok távolságának aránya egy bizonyos küszöbértéknél kisebb. A mérésben próbálják ki a $0.1$ an $0.7$ és a $0.9$ küszöbértékeket.
+A kapott $matches$ lista minden eleme további két elemre bontható. Ezek közül az első a legjobb, a másik pedig a második legjobb párosítás. Egy párosítás esetén a jellemző leíró vektorok négyzetes távolságát a $distance$ tagváltozó tartalmazza.
 
-Egy párosítás távolságának lekérdezése
-
-\begin{lstlisting}[language=Python]
-match.distance
-\end{lstlisting}
+Ezt követően alkalmazzuk az aránypár alapú szűrést. Egy párosítást akkor érdemes megtartani, ha a legközelebbi és a második legközelebbi szomszédok távolságának aránya egy bizonyos küszöbértéknél kisebb. A két párosítás közül a kimeneti listában már csak a legjobb maradjon benne. A mérésben próbálják ki a $0.1$ an $0.7$ és a $0.9$ küszöbértékeket.
 
 Ezt követően a megvalósított függvényt a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényének megfelelő helyén meg kell hívni.
 
@@ -526,7 +555,7 @@ $numCandidates\times self.N$ darab $[0-numMatches)$ közti random integer előá
 indices = np.random.randint(0,numMatches,(numCandidates,self.N))
 \end{lstlisting}
 
-Egy darab transzformáció jelölt készítése. A bemeneti változókat a teljes listákból az előbb előállított random indexek alapján kell kiválasztani.
+Egy darab transzformáció jelölt készítése. Az $srcCoordsSelection$ és $dstCoordsSelection$ bemeneti változókat a teljes listákból ($srcCoords$ és $dstCoords$) az előbb előállított random indexek segítségével kell kiválasztani.
 
 \begin{lstlisting}[language=Python]
 candidate = self.generateCandidate(srcCoordsSelection,dstCoordsSelection)
@@ -534,7 +563,7 @@ candidate = self.generateCandidate(srcCoordsSelection,dstCoordsSelection)
 
 A kapott $candidate$ jelölt lehet \textbf{None} bizonyos esetekben, így a jelölteket tartalmazó listából ezeket utólag törölni kell.
 
-Jelölt kiértékelése és inlierek meghatározása. A kimenet egy lista, melynek minden eleme $0$ vagy $1$ az adott pontpár inlier státuszának függvényében.
+Jelölt kiértékelése és inlierek meghatározása. A kimenet egy lista, melynek minden eleme $0$ vagy $1$ az adott pontpár inlier státuszának függvényében. FONTOS: Míg az egyes jelöltek becsléséhez az előbb csak $self.N$ darab véletlen pontpárt használtunk, a kiértékelésnél azt kell megnézni, hogy az összes pontpárból hányra illik rá az adott jelölt. Az összes jelölthöz tartozó inliers tömböket az $arrayOfInliers$ listába tároljuk el.
 
 \begin{lstlisting}[language=Python]
 inliers = self.evalCandidate(candidate,srcCoords,dstCoords)
@@ -559,6 +588,8 @@ inliers = np.array(arrayOfInliers[best_i],dtype='bool')
 \end{lstlisting}
 
 Ezt követően a jelölt állításához használt módszerrel finomítsuk a legjobb jelöltet csak az inlier pontok használatával. FONTOS: Ez megint lehet \textbf{None}, ebben az esetben használjuk a finomítás nélküli legjobb jelölt értéket.
+
+Érdemes észrevenni, hogy itt már csak a legtöbb inlierrel rendelkező jelöltet generáljuk újra, nem pedig az összes jelöltet. Éppen ezért ebben a lépésben egyetlen mátrixot hozunk létre, nem pedig egy listát. Ezt azért tesszük meg, mert a jelöltet eredetileg néhány pontpár alapján becsültük, inlierből viszont tipikusan 1-2 nagyságrenddel több van, így a kapott becslés lényegesen pontosabb.
 
 \begin{lstlisting}[language=Python]
 mtx = self.generateCandidate(InlierSrcCoords,InlierDstCoords)
@@ -619,7 +650,7 @@ self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
 
 A feladathoz érdemes a \emph{Kalman.py} fájlban definiált \textbf{Kalman} osztály megvalósítását tanulmányozni (különös tekintettel a dinamikus rendszer mátrixaira).
 
-Első lépésként egy korábban megírt kódrészletet kell módosítanunk. Az előző képhez képesti relatív elmozdulást amikor átkonvertáltuk abszulút pozícióvá, az ereménnyel felülírtuk a $self.transform$ változót. Ezt most meg kellene változtatni az alábbi módon:
+Első lépésként egy korábban megírt kódrészletet kell módosítanunk. Az előző képhez képesti relatív elmozdulást amikor átkonvertáltuk abszolút pozícióvá, az eredménnyel felülírtuk a $self.transform$ változót. Ezt most meg kellene változtatni az alábbi módon:
 
 \begin{lstlisting}[language=Python]
 trPrev = np.matmul(self.transform,trPrev)
@@ -640,11 +671,26 @@ self.transform = self.KF(trPrev,trMap)
 	\item Írja fel a Pinhole kamera vetítésének egyenletét!
 	\item Mi az a RANSAC algoritmus? Milyen lépései vannak?
 	\item Mire használható a Kalman szűrő? Mire alapszik?
-	\item Adott három Python lista $a$, $b$ (egyenlő hosszúak) és $c$ (bármekkora lehet). Ezekből szeretnénk előállítani egy kimeneti listát ($d$), melynek $d_i$ eleme az alábbi módon álljon elő: $d_i = [a_i*b_i; ~~ b_i+a_i]$. Ezt az elemet viszont csak páratlan $i$ értékek mellett állítsuk elő, vagy abban a kivételes esetben, ha $a_i$ benne van a $c$ listában, $b_i$ viszont nincs. Állítsa elő a $d$ listát egyetlen (1!) sor Python kóddal!
-	\item Adott két NumPy mátrix, $A$, amely egy $4\times 4$ mátrix, valamint $X$, amely egy $3\times N$ mátrix, melynek minden oszlopát ($x_i$) egy 3D vektorként értelmezünk. Állítsa elő az $Y$ tömböt (szintén $3\times N$), amelynek minden oszlopa $y_i = A^{-1} \hat{x_i}$ ahol $\hat{x_i}$ az $x_i$ homogén koordinátás változata. A megoldáshoz nem használhat for ciklust!
+	\item List comprehension írása. Az összes alábbi feladatot egyetlen sorban kell megvalósítani.
+	\begin{enumerate}
+		\item Adott két lista $a$ és $b$ (egyenlő hosszúak). Szorozza össze ezek minden második elemét és tegye ezeket a kimeneti listába.
+		\item Adott két lista $a$ és $b$ (akármilyen hosszúak). A kimeneti lista tartalmazza a $myFunc(a_i)$ értékeket ($a_i\in a$), de csak akkor, ha $a_i$ nincs benne a $b$ listában.
+		\item Adott két lista $a$ és $b$ (egyenlő hosszúak). A kimeneti lista egyes elemeinek értéke legyen $myFunc1(a_i,c_i)$, ahol $c_i$ a $myFunc2(b_i)$ függvény segítségével állítható elő ($a_i\in a$~~$b_i\in b$).
+		\item Adott egy lista $a$. A kimeneti listába gyűjtse ki $a$ azon értékeit, melyek nem $None$-ok.
+	\end{enumerate}
+	\item Numpy tömbök manipulációja. A feladatokat for ciklus/list comprehension használata nélkül kell megoldani.
+	\begin{enumerate}
+		\item Adott egy NumPy tömb $X$, amely $N\times 3$ méretű, és minden sora egy 3D pont koordinátája. Alakítsa ezeket homogén koordinátákká!
+		\item Adott két NumPy tömb $A$, amely $4\times 4$ méretű és $X$, amely $N\times 4$ méretű. Szorozza ezeket össze úgy, hogy kimenetként újra egy $N\times 4$ tömböt kapjunk (a dimenziók sorrendjére tessék figyelni)!
+		\item Adott egy NumPy tömb $X$, amely $N\times 4$ méretű, és minden sora egy 3D pont homogén koordinátás alakja. Konvertálja ezeket vissza euklideszi koordinátákká!
+		\item Adott egy NumPy tömb $X$, amely $N\times 3$ méretű. Generáljon $10$ darab random integert a $[0-N)$ tartományban, és válassza ki a tömbből a random indexeknek megfelelő sorokat.
+		\item Adott egy NumPy tömb $X$, amely $N\times 3$ méretű. Válassza ki azokat a sorokat, ahol az első elem értéke pozitív.
+		\item Adott egy ismeretlen méretű NumPy tömb $X$. Generáljon annyi egyenletes eloszlású véletlen számot, ahány elem van $X$ nulladik dimenziója mentén. Válassza ki ennek segítségével a tömb elemeinek véletlen $50\%$-át!
+		
+	\end{enumerate}
 \end{enumerate}
 
-Az utolsó két kérdés helyes megoldásához a Google Colab~\cite{colab} online Python notebook környezetben lehet kísérletezgetni.
+Az utolsó két kérdés helyes megoldásához a Google Colab~\cite{colab} online Python notebook környezetben lehet kísérletezgetni. A beugróban szereplő feladatok a fenti példáktól valamelyest különbözni fognak, a szintaktikai hibákkal szemben persze elnézőek vagyunk!
 
 \printbibliography
 
