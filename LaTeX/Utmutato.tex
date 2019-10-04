@@ -609,58 +609,58 @@ Aboszolút transzformáció meghatározása
 self.transform = np.matmul(self.transform,trPrev)
 \end{lstlisting}
 
-\section{Kiegészítő feladatok}
-
-A feladatokhoz a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényét kell módosítani.
-
-\subsection{Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}
-
-A feladathoz érdemes a \emph{Map.py} fájlban definiált \textbf{Map} osztály megvalósítását tanulmányozni.
-
-Térkép jellemzőivel történő párosítás
-
-\begin{lstlisting}[language=Python]
-mapMatch = match(self.Map.features,features)
-\end{lstlisting}
-
-Transzformáció számolása
-\begin{lstlisting}[language=Python]
-trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
-\end{lstlisting}
-
-A térképben már szereplő jellemzők frissítése
-
-\begin{lstlisting}[language=Python]
-self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
-\end{lstlisting}
-
-A térképben még nem szereplő jellemzők megkeresése (előző képen is megtalált jellemzők, amik a térképben nincsenek benne)
-
-\begin{lstlisting}[language=Python]
-newFeat = [f for f in featPrev if f not in featMap]
-\end{lstlisting}
-
-Új jellemzők hozzáadása
-
-\begin{lstlisting}[language=Python]
-self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
-\end{lstlisting}
-
-\subsection{Feladat: Alkosson robusztus pozícióbecslő eljárást, ami a kamera mozgásának dinamikus modelljét, valamint a két különböző pozíció becslést Kalman-szűrő segítségével kombinálja!}
-
-A feladathoz érdemes a \emph{Kalman.py} fájlban definiált \textbf{Kalman} osztály megvalósítását tanulmányozni (különös tekintettel a dinamikus rendszer mátrixaira).
-
-Első lépésként egy korábban megírt kódrészletet kell módosítanunk. Az előző képhez képesti relatív elmozdulást amikor átkonvertáltuk abszolút pozícióvá, az eredménnyel felülírtuk a $self.transform$ változót. Ezt most meg kellene változtatni az alábbi módon:
-
-\begin{lstlisting}[language=Python]
-trPrev = np.matmul(self.transform,trPrev)
-\end{lstlisting}
-
-Ezt követően futtassuk le a Kalman szűrőt
-
-\begin{lstlisting}[language=Python]
-self.transform = self.KF(trPrev,trMap)
-\end{lstlisting}
+%\section{Kiegészítő feladatok}
+%
+%A feladatokhoz a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényét kell módosítani.
+%
+%\subsection{Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}
+%
+%A feladathoz érdemes a \emph{Map.py} fájlban definiált \textbf{Map} osztály megvalósítását tanulmányozni.
+%
+%Térkép jellemzőivel történő párosítás
+%
+%\begin{lstlisting}[language=Python]
+%mapMatch = match(self.Map.features,features)
+%\end{lstlisting}
+%
+%Transzformáció számolása
+%\begin{lstlisting}[language=Python]
+%trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
+%\end{lstlisting}
+%
+%A térképben már szereplő jellemzők frissítése
+%
+%\begin{lstlisting}[language=Python]
+%self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
+%\end{lstlisting}
+%
+%A térképben még nem szereplő jellemzők megkeresése (előző képen is megtalált jellemzők, amik a térképben nincsenek benne)
+%
+%\begin{lstlisting}[language=Python]
+%newFeat = [f for f in featPrev if f not in featMap]
+%\end{lstlisting}
+%
+%Új jellemzők hozzáadása
+%
+%\begin{lstlisting}[language=Python]
+%self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
+%\end{lstlisting}
+%
+%\subsection{Feladat: Alkosson robusztus pozícióbecslő eljárást, ami a kamera mozgásának dinamikus modelljét, valamint a két különböző pozíció becslést Kalman-szűrő segítségével kombinálja!}
+%
+%A feladathoz érdemes a \emph{Kalman.py} fájlban definiált \textbf{Kalman} osztály megvalósítását tanulmányozni (különös tekintettel a dinamikus rendszer mátrixaira).
+%
+%Első lépésként egy korábban megírt kódrészletet kell módosítanunk. Az előző képhez képesti relatív elmozdulást amikor átkonvertáltuk abszolút pozícióvá, az eredménnyel felülírtuk a $self.transform$ változót. Ezt most meg kellene változtatni az alábbi módon:
+%
+%\begin{lstlisting}[language=Python]
+%trPrev = np.matmul(self.transform,trPrev)
+%\end{lstlisting}
+%
+%Ezt követően futtassuk le a Kalman szűrőt
+%
+%\begin{lstlisting}[language=Python]
+%self.transform = self.KF(trPrev,trMap)
+%\end{lstlisting}
 
 \chapter{Ellenőrző kérdések}
 
@@ -670,7 +670,6 @@ self.transform = self.KF(trPrev,trMap)
 	\item Mi az a drift és hogyan kerülhető el?
 	\item Írja fel a Pinhole kamera vetítésének egyenletét!
 	\item Mi az a RANSAC algoritmus? Milyen lépései vannak?
-	\item Mire használható a Kalman szűrő? Mire alapszik?
 	\item List comprehension írása. Az összes alábbi feladatot egyetlen sorban kell megvalósítani.
 	\begin{enumerate}
 		\item Adott két lista $a$ és $b$ (egyenlő hosszúak). Szorozza össze ezek minden második elemét és tegye ezeket a kimeneti listába.

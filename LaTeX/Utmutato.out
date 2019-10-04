@@ -11,7 +11,4 @@
 \BOOKMARK [2][-]{subsection.3.2.1}{Képjellemzők detektálása}{section.3.2}% 11
 \BOOKMARK [2][-]{subsection.3.2.2}{Képjellemzők párosítása}{section.3.2}% 12
 \BOOKMARK [1][-]{section.3.3}{Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}{chapter.3}% 13
-\BOOKMARK [1][-]{section.3.4}{Kiegészítő feladatok}{chapter.3}% 14
-\BOOKMARK [2][-]{subsection.3.4.1}{Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}{section.3.4}% 15
-\BOOKMARK [2][-]{subsection.3.4.2}{Feladat: Alkosson robusztus pozícióbecslő eljárást, ami a kamera mozgásának dinamikus modelljét, valamint a két különböző pozíció becslést Kalman-szűrő segítségével kombinálja!}{section.3.4}% 16
-\BOOKMARK [0][-]{chapter.4}{Ellenőrző kérdések}{}% 17
+\BOOKMARK [0][-]{chapter.4}{Ellenőrző kérdések}{}% 14
