@@ -23,7 +23,7 @@ class Camera(object):
 
     def getImages(self):
         img, _ = freenect.sync_get_video()
-        depth, _ = freenect.sync_get_depth()
+        depth, _ = freenect.sync_get_depth(freenect.DEPTH_REGISTERED)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
         return img, depth
