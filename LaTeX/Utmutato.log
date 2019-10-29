@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99998 (MiKTeX 2.9.6500 64-bit) (preloaded format=xelatex 2018.11.20)  4 OCT 2019 15:26
+This is XeTeX, Version 3.14159265-2.6-0.99998 (MiKTeX 2.9.6500 64-bit) (preloaded format=xelatex 2018.11.20)  29 OCT 2019 17:11
 entering extended mode
 **./Utmutato.tex
 (Utmutato.tex
@@ -1897,11 +1897,11 @@ See the caption package documentation for explanation.
 Package caption Warning: Unused \captionsetup[figure] on input line 164.
 See the caption package documentation for explanation.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 696.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 696.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 701.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 701.
 (Utmutato.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 696.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 696.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 701.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 701.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
@@ -1909,7 +1909,7 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package logreq Info: Writing requests to 'Utmutato.run.xml'.
 \openout1 = `Utmutato.run.xml'.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 696.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 701.
  ) 
 Here is how much of TeX's memory you used:
  41415 strings out of 427835

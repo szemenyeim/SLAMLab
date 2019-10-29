@@ -609,8 +609,13 @@ Aboszolút transzformáció meghatározása
 self.transform = np.matmul(self.transform,trPrev)
 \end{lstlisting}
 
-%\section{Kiegészítő feladatok}
-%
+\ifratlabor
+\else
+\section{Kiegészítő feladat}
+
+A \emph{main.py} fájlban definiált \emph{useCam} változó átállításával saját felvételeket is készíthet a számítógéphez kapcsolódó RGB-D kamera segítségével. Az ENTER gomb lenyomásával képet készíthet, az ESC gomb segítségével pedig jelezheti a program felé, hogy már nem kíván több képet készíteni, így elindulhat a rekonstrukciós eljárás. Vizsgáljon meg ennek segítségével néhány saját rekonstrukciót is!
+\fi
+
 %A feladatokhoz a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényét kell módosítani.
 %
 %\subsection{Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}
