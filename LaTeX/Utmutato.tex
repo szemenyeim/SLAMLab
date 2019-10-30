@@ -454,14 +454,28 @@ A feladatok megoldása során célszerű arra figyelni, hogy az alábbi mintakó
 
 FONTOS: Az alábbi feladatokat célszerű list comprehension segítségével megoldani, ugyanis ez a hagyományos kibontott for ciklusoknál 30\%-kal gyorsabb.
 
-\section{Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy $[u, v, d]$ képkoordináta-mélység pár 3D pozícióját!}
+\section{Feladat: Geometriai segédfüggvények megvalósítása}
 
-A feladathoz a \emph{Geometry.py} \textbf{pts23D} függvényét kell megvalósítani. A függvény bemenetei: 
+A feladathoz a \emph{Geometry.py} fájlban kell dolgozni.
+
+\subsection{Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy $[u, v, d]$ képkoordináta-mélység pár 3D pozícióját!}
+
+A feladathoz a \textbf{pts23D} függvényt kell megvalósítani. A függvény bemenetei: 
 \begin{itemize}
 \item \emph{center}: egy tuple, amely az adott pont képkoordinátáit tartalmazza
 \item \emph{depth}: egy szám, amely az adott pont mélységét tartalmazza milliméterben
 \item \emph{A}: egy NumPy tömb, amely a kameramátrix értékeit tartalmazza
 \end{itemize}
+
+\subsection{Feladat: Írjon eljárást, a bemenetére kapott 3D pontokat egy szintén bementként kapott projektív transzformációs mátrix segítségével transzformál!}
+
+A feladathoz a \textbf{transformPoints} függvényt kell megvalósítani. A függvény bemenetei: 
+\begin{itemize}
+	\item \emph{pts}: egy $N\times 3$ NumPy tömb, melynek minden sora egy 3D pont
+	\item \emph{mtx}: Egy $3\times 4$ mátrix, amely egy euklideszi transzformáció
+\end{itemize}
+
+Kimenetként szintén $N\times 3$ méretű tömböt várunk.
 
 \section{Feladat: Végezze el két egymást követő képen a képjellemzők detektálását és robusztus párosítását!}
 

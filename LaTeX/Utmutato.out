@@ -6,9 +6,11 @@
 \BOOKMARK [1][-]{section.2.1}{Haladó Python}{chapter.2}% 6
 \BOOKMARK [1][-]{section.2.2}{Haladó NumPy}{chapter.2}% 7
 \BOOKMARK [0][-]{chapter.3}{Mérési feladatok}{}% 8
-\BOOKMARK [1][-]{section.3.1}{Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy [u, v, d] képkoordináta-mélység pár 3D pozícióját!}{chapter.3}% 9
-\BOOKMARK [1][-]{section.3.2}{Feladat: Végezze el két egymást követő képen a képjellemzők detektálását és robusztus párosítását!}{chapter.3}% 10
-\BOOKMARK [2][-]{subsection.3.2.1}{Képjellemzők detektálása}{section.3.2}% 11
-\BOOKMARK [2][-]{subsection.3.2.2}{Képjellemzők párosítása}{section.3.2}% 12
-\BOOKMARK [1][-]{section.3.3}{Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}{chapter.3}% 13
-\BOOKMARK [0][-]{chapter.4}{Ellenőrző kérdések}{}% 14
+\BOOKMARK [1][-]{section.3.1}{Feladat: Geometriai segédfüggvények megvalósítása}{chapter.3}% 9
+\BOOKMARK [2][-]{subsection.3.1.1}{Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy [u, v, d] képkoordináta-mélység pár 3D pozícióját!}{section.3.1}% 10
+\BOOKMARK [2][-]{subsection.3.1.2}{Feladat: Írjon eljárást, a bemenetére kapott 3D pontokat egy szintén bementként kapott projektív transzformációs mátrix segítségével transzformál!}{section.3.1}% 11
+\BOOKMARK [1][-]{section.3.2}{Feladat: Végezze el két egymást követő képen a képjellemzők detektálását és robusztus párosítását!}{chapter.3}% 12
+\BOOKMARK [2][-]{subsection.3.2.1}{Képjellemzők detektálása}{section.3.2}% 13
+\BOOKMARK [2][-]{subsection.3.2.2}{Képjellemzők párosítása}{section.3.2}% 14
+\BOOKMARK [1][-]{section.3.3}{Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}{chapter.3}% 15
+\BOOKMARK [0][-]{chapter.4}{Ellenőrző kérdések}{}% 16
