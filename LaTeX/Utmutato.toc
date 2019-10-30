@@ -20,14 +20,18 @@
 \defcounter {refsection}{0}\relax 
 \select@language {magyar} \contentsline {chapter}{\numberline {3}Mérési feladatok}{11}{chapter.3}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {section}{\numberline {3.1}Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy $[u, v, d]$ képkoordináta-mélység pár 3D pozícióját!}{11}{section.3.1}
+\select@language {magyar} \contentsline {section}{\numberline {3.1}Feladat: Geometriai segédfüggvények megvalósítása}{11}{section.3.1}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {section}{\numberline {3.2}Feladat: Végezze el két egymást követő képen a képjellemzők detektálását és robusztus párosítását!}{11}{section.3.2}
+\select@language {magyar} \contentsline {subsection}{\numberline {3.1.1}Feladat: Írjon eljárást, amely a kameramátrix ismeretében meghatározza egy $[u, v, d]$ képkoordináta-mélység pár 3D pozícióját!}{11}{subsection.3.1.1}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {subsection}{\numberline {3.2.1}Képjellemzők detektálása}{11}{subsection.3.2.1}
+\select@language {magyar} \contentsline {subsection}{\numberline {3.1.2}Feladat: Írjon eljárást, a bemenetére kapott 3D pontokat egy szintén bementként kapott projektív transzformációs mátrix segítségével transzformál!}{11}{subsection.3.1.2}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {subsection}{\numberline {3.2.2}Képjellemzők párosítása}{12}{subsection.3.2.2}
+\select@language {magyar} \contentsline {section}{\numberline {3.2}Feladat: Végezze el két egymást követő képen a képjellemzők detektálását és robusztus párosítását!}{12}{section.3.2}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {section}{\numberline {3.3}Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}{13}{section.3.3}
+\select@language {magyar} \contentsline {subsection}{\numberline {3.2.1}Képjellemzők detektálása}{12}{subsection.3.2.1}
 \defcounter {refsection}{0}\relax 
-\select@language {magyar} \contentsline {chapter}{\numberline {4}Ellenőrző kérdések}{15}{chapter.4}
+\select@language {magyar} \contentsline {subsection}{\numberline {3.2.2}Képjellemzők párosítása}{13}{subsection.3.2.2}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {section}{\numberline {3.3}Feladat: Implementálja a RANSAC algoritmust, és határozza meg a két képkocka közti merev transzformáció mátrixát!}{14}{section.3.3}
+\defcounter {refsection}{0}\relax 
+\select@language {magyar} \contentsline {chapter}{\numberline {4}Ellenőrző kérdések}{16}{chapter.4}
