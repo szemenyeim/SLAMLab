@@ -12,6 +12,15 @@ def pt23D(center, depth, A):
 
     return np.array([X, Y, Z])
 
+# Transform an array of points using homogeneous coordinates
+def transformPoints(pts,mtx):
+    #TODO: Add fourth coordinate (1)
+
+    #TODO: Perform matrix multiplication (Don1t forget: both the input and the final output have to be transposed)
+
+    #TODO: Return first 3 coordinates (assuming euclidean transforms)
+    return None
+
 # Get pixel value using bilinear interpolation
 def getSubpix(img,pt):
     
@@ -30,17 +39,6 @@ def getSubpix(img,pt):
         (img[y1, x0] * (1.0 - a) + img[y1, x1] * a) * c
 
     return d
-
-# Transform an array of points using homogeneous coordinates
-def transformPoints(pts,mtx):
-    # Add fourth coordinate (1)
-    ptsH = np.append(pts,np.ones((pts.shape[0],1)),1)
-
-    # Perform matrix multiplication
-    tranH = np.transpose(np.matmul(mtx,np.transpose(ptsH)))
-
-    # Return first 3 coordinates (assuming euclidean transforms)
-    return tranH[:,:3]
 
 # Convert rotation matrix to euler angles
 def euler2rot(theta):

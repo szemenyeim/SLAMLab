@@ -6,13 +6,14 @@ import shutil
 
 if __name__ == '__main__':
 
-    useCam = True
+    useCam = False
 
     if useCam:
         cam = Camera()
         i = 0
         root = './Temp/'
-        shutil.rmtree(root)
+        if os.path.exists(root):
+            shutil.rmtree(root)
         os.mkdir(root)
         os.mkdir(root + "rgb/")
         os.mkdir(root + "depth/")
