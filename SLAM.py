@@ -107,7 +107,6 @@ class SLAM(object):
             cv2.waitKey(0)
     else:
         def visualize(self, i):
-            self.PC.pc = np.array([[1.1,2.2,3.3,4.0,5.0,6],[2,4,6,54,69,232],[-1,-2,-3,144,212,43],[-1,2,3,144,22,243]])
             from pypcd import pypcd
             rgb = np.expand_dims(pypcd.encode_rgb_for_pcl(self.PC.pc[:,3:6].astype('uint8')),1)
             pc = np.hstack([self.PC.pc[:,0:3],rgb]).astype('float32')
