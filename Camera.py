@@ -5,7 +5,9 @@ from primesense import _openni2 as c_api
 import os.path as osp
 from glob import glob1
 import re
-import freenect
+import platform
+
+rel = platform.linux_distribution() #returns release version
 
 def tryint(s):
     try:
@@ -21,9 +23,41 @@ def alphanum_key(s):
 
 class Camera(object):
 
-    def getImages(self):
-        img, _ = freenect.sync_get_video()
-        depth, _ = freenect.sync_get_depth(freenect.DEPTH_REGISTERED)
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    if rel[1] == '18.04':
+        def getImages(self):
+            import freenect
+            img, _ = freenect.sync_get_video()
+            depth, _ = freenect.sync_get_depth(0,freenect.DEPTH_REGISTERED)
+            img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+            return img, depth
 
-        return img, depth
+    else:
+        def __init__(self):
+            openni2.initialize("/home/nvidia/Downloads/OpenNI/OpenNI-Linux-Arm64-2.3/Redist")
+            self.dev = openni2.Device.open_any()
+            self.depth_stream = self.dev.create_depth_stream()
+            self.color_stream = self.dev.create_color_stream()
+            self.dev.set_depth_color_sync_enabled( True )
+            self.depth_stream.start()
+            self.depth_stream.set_video_mode(
+                c_api.OniVideoMode(pixelFormat=c_api.OniPixelFormat.ONI_PIXEL_FORMAT_DEPTH_1_MM, resolutionX=640,
+                                   resolutionY=480, fps=30))
+            self.color_stream.set_video_mode(
+                c_api.OniVideoMode(pixelFormat=c_api.OniPixelFormat.ONI_PIXEL_FORMAT_RGB888, resolutionX=640,
+                                   resolutionY=480, fps=30))
+            self.color_stream.start()
+            self.dev.set_image_registration_mode(openni2.IMAGE_REGISTRATION_DEPTH_TO_COLOR)
+
+        def getImages(self):
+            dframe = self.depth_stream.read_frame()
+            dframe_data = dframe.get_buffer_as_uint16()
+            depth = np.frombuffer(dframe_data, dtype=np.uint16)
+            depth.shape = (480, 640, 1)
+
+            cframe = self.color_stream.read_frame()
+            cframe_data = cframe.get_buffer_as_uint8()
+            img = np.frombuffer(cframe_data, dtype=np.uint8)
+            img.shape = (480, 640, 3)
+            img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+
+            return img, depth
