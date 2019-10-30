@@ -2,22 +2,24 @@ import SLAM
 from Camera import *
 import sys
 import os
+import shutil
 
 if __name__ == '__main__':
 
-    useCam = False
+    useCam = True
 
     if useCam:
         cam = Camera()
         i = 0
         root = './Temp/'
+        shutil.rmtree(root)
         os.mkdir(root)
         os.mkdir(root + "rgb/")
         os.mkdir(root + "depth/")
         while True:
             img, depth = cam.getImages()
             cv2.imshow("img", img)
-            cv2.imshow("depth", depth)
+            cv2.imshow("depth", depth*5)
             c = cv2.waitKey(1)
             if c == 13:
                 cv2.imwrite(root + "rgb/" + str(i).zfill(2) + ".png", img)
