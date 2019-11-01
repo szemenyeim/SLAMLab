@@ -63,22 +63,6 @@ class SLAM(object):
             #TODO: Get absolute transform
 
 
-            #TODO: Match against map
-
-            #TODO: Get transform
-
-
-            #TODO: Run kalman filter
-
-
-            #TODO: Update features in map
-
-
-            #TODO: Get new features (features in featPrev, but not in featMap)
-
-            #TODO: Add new features
-
-
             # Update point cloud
             self.PC.update(img,depth,self.A,self.transform)
 
