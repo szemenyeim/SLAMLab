@@ -5,9 +5,8 @@ from primesense import _openni2 as c_api
 import os.path as osp
 from glob import glob1
 import re
-import platform
 
-rel = platform.linux_distribution() #returns release version
+type = False
 
 def tryint(s):
     try:
@@ -23,7 +22,7 @@ def alphanum_key(s):
 
 class Camera(object):
 
-    if rel[1] == '18.04':
+    if type:
         def getImages(self):
             import freenect
             img, _ = freenect.sync_get_video()
@@ -33,15 +32,15 @@ class Camera(object):
 
     else:
         def __init__(self):
-            openni2.initialize("/home/nvidia/Downloads/OpenNI/OpenNI-Linux-Arm64-2.3/Redist")
+            openni2.initialize("/home/labor/Downloads/OpenNI/Linux/OpenNI-Linux-x64-2.3.0.63/Redist")
             self.dev = openni2.Device.open_any()
             self.depth_stream = self.dev.create_depth_stream()
             self.color_stream = self.dev.create_color_stream()
             self.dev.set_depth_color_sync_enabled( True )
-            self.depth_stream.start()
             self.depth_stream.set_video_mode(
                 c_api.OniVideoMode(pixelFormat=c_api.OniPixelFormat.ONI_PIXEL_FORMAT_DEPTH_1_MM, resolutionX=640,
                                    resolutionY=480, fps=30))
+            self.depth_stream.start()
             self.color_stream.set_video_mode(
                 c_api.OniVideoMode(pixelFormat=c_api.OniPixelFormat.ONI_PIXEL_FORMAT_RGB888, resolutionX=640,
                                    resolutionY=480, fps=30))
