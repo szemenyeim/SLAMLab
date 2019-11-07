@@ -16,7 +16,7 @@ def pt23D(center, depth, A):
 def transformPoints(pts,mtx):
     #TODO: Add fourth coordinate (1)
 
-    #TODO: Perform matrix multiplication (Don1t forget: both the input and the final output have to be transposed)
+    #TODO: Perform matrix multiplication (Don't forget: both the input and the final output have to be transposed)
 
     #TODO: Return first 3 coordinates (assuming euclidean transforms)
     return None

@@ -8,9 +8,6 @@ from RANSAC import RANSAC
 from Kalman import Kalman
 np.set_printoptions(precision=3)
 np.set_printoptions(suppress=True)
-import platform
-
-rel = platform.linux_distribution() #returns release version
 
 class SLAM(object):
     def __init__(self,root,fps = 1):
@@ -72,26 +69,17 @@ class SLAM(object):
         self.prevFeat = features
         self.prevKp = keypoints
 
-    if rel[1] == '18.04':
-        def visualize(self,i):
-            import pptk
-            # If visualizer already exists
-            if self.v is not None:
-                # Clear and load
-                self.v.clear()
-                self.v.load(self.PC.pc[:,0:3],self.PC.pc[:,3:6]/255.0)
-            else:
-                # Create new one
-                self.v = pptk.viewer(self.PC.pc[:,0:3],self.PC.pc[:,3:6]/255.0)
-            cv2.waitKey(0)
-    else:
-        def visualize(self, i):
-            from pypcd import pypcd
-            rgb = np.expand_dims(pypcd.encode_rgb_for_pcl(self.PC.pc[:,3:6].astype('uint8')),1)
-            pc = np.hstack([self.PC.pc[:,0:3],rgb]).astype('float32')
-            pc = pypcd.make_xyz_rgb_point_cloud(pc)
-            pc.save_pcd("Clouds/%dCloud.pcd" % i, compression='ascii')
-            cv2.waitKey(0)
+    def visualize(self,i):
+        import pptk
+        # If visualizer already exists
+        if self.v is not None:
+            # Clear and load
+            self.v.clear()
+            self.v.load(self.PC.pc[:,0:3],self.PC.pc[:,3:6]/255.0)
+        else:
+            # Create new one
+            self.v = pptk.viewer(self.PC.pc[:,0:3],self.PC.pc[:,3:6]/255.0)
+        cv2.waitKey(0)
 
     def run(self):
 
