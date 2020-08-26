@@ -5,7 +5,7 @@ from Feature import *
 from Database import Dataset
 from PointCloud import PointCloud
 from RANSAC import RANSAC
-from Kalman import Kalman
+#from Kalman import Kalman
 np.set_printoptions(precision=3)
 np.set_printoptions(suppress=True)
 
@@ -17,7 +17,7 @@ class SLAM(object):
         self.A = np.genfromtxt("cam.txt", delimiter=',')
         self.fps = fps
         self.transform = np.eye(4,4)
-        self.KF = Kalman(1.0/self.fps)
+        #self.KF = Kalman(1.0/self.fps)
         self.prevImg = None
         self.prevDepth = None
         self.prevFeat = None
