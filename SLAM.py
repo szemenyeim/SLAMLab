@@ -25,6 +25,7 @@ class SLAM(object):
         self.v = None
         self.RANSAC = RANSAC()
         self.PC = PointCloud()
+        self.useMap = False
         np.random.seed(1)
         #TODO: create feature detector
 
@@ -45,23 +46,41 @@ class SLAM(object):
 
         if self.prevImg is not None:
 
-            #TODO: Match against previous
+            # TODO: Match against previous
 
             # Draw features
-            #TODO: Uncomment
+            # TODO: Uncomment
             '''draw = cv2.drawMatches(self.prevImg,self.prevKp,img,keypoints,prevMatch,None)
-            cv2.imshow("matches",draw)'''
-            cv2.imshow("img",img)
-            cv2.imshow("depth",img*np.expand_dims(depth/10000,2)/255)
-            cv2.waitKey(1)
+            cv2_imshow(draw)
+            cv2.waitKey(1)'''
 
-            #TODO: Get relative transform
+            # TODO: Get relative transform
 
-            #TODO: Get absolute transform
+            # TODO: Extra task only
+            if self.useMap:
+                pass
+                # Match against map
 
+                # Get transform
+
+            # TODO: Get absolute transform
+
+            # TODO: Extra task only
+            if self.useMap:
+                pass
+                # Update features in map
+
+                # Get new features (features in featPrev, but not in featMap)
+
+                # Add new features
 
             # Update point cloud
-            self.PC.update(img,depth,self.A,self.transform)
+            self.PC.update(img, depth, self.A, self.transform)
+
+        else:
+            if self.useMap:
+                # Initialize map
+                self.Map.addFeatures(features, self.transform)
 
         # Update prevoius values
         self.prevImg = img
