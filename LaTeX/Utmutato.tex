@@ -80,7 +80,7 @@
 % RAT or IKL conditional
 %--------------------------------------------------------------------------------------
 \newif\ifratlabor
-\ratlabortrue % Comment out for IKL, leave it in for RAT
+%\ratlabortrue % Comment out for IKL, leave it in for RAT
 
 \ifratlabor
 \newcommand{\viktitle}{3D Képfeldolgozás}
@@ -623,48 +623,43 @@ Aboszolút transzformáció meghatározása
 self.transform = np.matmul(self.transform,trPrev)
 \end{lstlisting}
 
-\ifratlabor
-\else
 \section{Kiegészítő feladat}
 
-A \emph{main.py} fájlban definiált \emph{useCam} változó átállításával saját felvételeket is készíthet a számítógéphez kapcsolódó RGB-D kamera segítségével. Az ENTER gomb lenyomásával képet készíthet, az ESC gomb segítségével pedig jelezheti a program felé, hogy már nem kíván több képet készíteni, így elindulhat a rekonstrukciós eljárás. Vizsgáljon meg ennek segítségével néhány saját rekonstrukciót is!
-\fi
+A feladatokhoz a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényét kell módosítani.
 
-%A feladatokhoz a \emph{SLAM.py} fájlban definiált \textbf{SLAM} osztály \textbf{addFrame} függvényét kell módosítani.
-%
-%\subsection{Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}
-%
-%A feladathoz érdemes a \emph{Map.py} fájlban definiált \textbf{Map} osztály megvalósítását tanulmányozni.
-%
-%Térkép jellemzőivel történő párosítás
-%
-%\begin{lstlisting}[language=Python]
-%mapMatch = match(self.Map.features,features)
-%\end{lstlisting}
-%
-%Transzformáció számolása
-%\begin{lstlisting}[language=Python]
-%trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
-%\end{lstlisting}
-%
-%A térképben már szereplő jellemzők frissítése
-%
-%\begin{lstlisting}[language=Python]
-%self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
-%\end{lstlisting}
-%
-%A térképben még nem szereplő jellemzők megkeresése (előző képen is megtalált jellemzők, amik a térképben nincsenek benne)
-%
-%\begin{lstlisting}[language=Python]
-%newFeat = [f for f in featPrev if f not in featMap]
-%\end{lstlisting}
-%
-%Új jellemzők hozzáadása
-%
-%\begin{lstlisting}[language=Python]
-%self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
-%\end{lstlisting}
-%
+\subsection{Feladat: A képeken detektált jellemzők segítségével alkosson térképet, amely a jellemzők abszolút pozícióját és leíróját tárolja!}
+
+A feladathoz érdemes a \emph{Map.py} fájlban definiált \textbf{Map} osztály megvalósítását tanulmányozni.
+
+Térkép jellemzőivel történő párosítás
+
+\begin{lstlisting}[language=Python]
+mapMatch = match(self.Map.features,features)
+\end{lstlisting}
+
+Transzformáció számolása
+\begin{lstlisting}[language=Python]
+trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
+\end{lstlisting}
+
+A térképben már szereplő jellemzők frissítése
+
+\begin{lstlisting}[language=Python]
+self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
+\end{lstlisting}
+
+A térképben még nem szereplő jellemzők megkeresése (előző képen is megtalált jellemzők, amik a térképben nincsenek benne)
+
+\begin{lstlisting}[language=Python]
+newFeat = [f for f in featPrev if f not in featMap]
+\end{lstlisting}
+
+Új jellemzők hozzáadása
+
+\begin{lstlisting}[language=Python]
+self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
+\end{lstlisting}
+
 %\subsection{Feladat: Alkosson robusztus pozícióbecslő eljárást, ami a kamera mozgásának dinamikus modelljét, valamint a két különböző pozíció becslést Kalman-szűrő segítségével kombinálja!}
 %
 %A feladathoz érdemes a \emph{Kalman.py} fájlban definiált \textbf{Kalman} osztály megvalósítását tanulmányozni (különös tekintettel a dinamikus rendszer mátrixaira).
