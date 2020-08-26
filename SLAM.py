@@ -5,7 +5,7 @@ from Feature import *
 from Database import Dataset
 from PointCloud import PointCloud
 from RANSAC import RANSAC
-from Kalman import Kalman
+#from Kalman import Kalman
 np.set_printoptions(precision=3)
 np.set_printoptions(suppress=True)
 import platform
@@ -20,7 +20,7 @@ class SLAM(object):
         self.A = np.genfromtxt("cam.txt", delimiter=',')
         self.fps = fps
         self.transform = np.eye(4,4)
-        self.KF = Kalman(1.0/self.fps)
+        #self.KF = Kalman(1.0/self.fps)
         self.prevImg = None
         self.prevDepth = None
         self.prevFeat = None
@@ -29,6 +29,7 @@ class SLAM(object):
         self.RANSAC = RANSAC()
         self.PC = PointCloud()
         self.feat = cv2.AKAZE_create(cv2.AKAZE_DESCRIPTOR_KAZE,threshold=0.0005)
+        self.useMap = True
         np.random.seed(1)
 
     # One SLAM step
@@ -67,25 +68,31 @@ class SLAM(object):
             # Get transform from the first frame
             trPrev = np.matmul(self.transform,trPrev)
 
-            # Match against map
-            mapMatch = match(self.Map.features,features)
-            # Get transform
-            trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
+            if self.useMap:
+                # Match against map
+                mapMatch = match(self.Map.features,features)
+                # Get transform
+                trMap,matchMap,featMap = self.RANSAC(self.Map.features,features,mapMatch)
 
             # Run kalman filter
-            self.transform = self.KF(trPrev,trMap)
-            print(self.KF.getMeas(self.transform,None)[[0,1,2,6,7,8]])
+            self.transform = trMap if self.useMap else trPrev#self.KF(trPrev,trMap)
+            #print(self.KF.getMeas(self.transform,None)[[0,1,2,6,7,8]])
 
-            # Update features in map
-            self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
+            if self.useMap:
+                # Update features in map
+                self.Map.updateFeatrues(featMap,matchMap,np.linalg.inv(self.transform))
 
-            # Get new features (features in featPrev, but not in featMap)
-            newFeat = [f for f in featPrev if f not in featMap]
-            # Add new features
-            self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
+                # Get new features (features in featPrev, but not in featMap)
+                newFeat = [f for f in featPrev if f not in featMap]
+                # Add new features
+                self.Map.addFeatures(newFeat,np.linalg.inv(self.transform))
 
             # Update point cloud
             self.PC.update(img,depth,self.A,self.transform)
+
+        else:
+            if self.useMap:
+                self.Map.addFeatures(features,self.transform)
 
         # Update prevoius values
         self.prevImg = img
@@ -93,7 +100,7 @@ class SLAM(object):
         self.prevFeat = features
         self.prevKp = keypoints
 
-    if rel[1] == '18.04':
+    if True:
         def visualize(self,i):
             import pptk
             # If visualizer already exists
@@ -120,5 +127,5 @@ class SLAM(object):
 
             self.addFrame(img,depth)
 
-            # Visualize
-            self.visualize(i)
+        # Visualize
+        self.visualize(i)
