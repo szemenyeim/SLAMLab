@@ -5,6 +5,7 @@ from Feature import *
 from Database import Dataset
 from PointCloud import PointCloud
 from RANSAC import RANSAC
+import open3d as o3d
 #from Kalman import Kalman
 np.set_printoptions(precision=3)
 np.set_printoptions(suppress=True)
@@ -89,16 +90,12 @@ class SLAM(object):
         self.prevKp = keypoints
 
     def visualize(self,i):
-        import pptk
-        # If visualizer already exists
-        if self.v is not None:
-            # Clear and load
-            self.v.clear()
-            self.v.load(self.PC.pc[:,0:3],self.PC.pc[:,3:6]/255.0)
-        else:
-            # Create new one
-            self.v = pptk.viewer(self.PC.pc[:,0:3],self.PC.pc[:,3:6]/255.0)
-        cv2.waitKey(0)
+        xyz = self.PC.pc[:, 0:3]
+        rgb = self.PC.pc[:, 3:6]/255.0
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(xyz)
+        pcd.colors = o3d.utility.Vector3dVector(rgb)
+        o3d.visualization.draw_geometries([pcd])
 
     def run(self):
 
@@ -106,5 +103,5 @@ class SLAM(object):
 
             self.addFrame(img,depth)
 
-            # Visualize
-            self.visualize(i)
+        # Visualize
+        self.visualize(i)
